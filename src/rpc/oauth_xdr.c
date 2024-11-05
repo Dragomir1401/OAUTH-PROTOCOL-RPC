@@ -3,7 +3,7 @@
  * It was generated using rpcgen.
  */
 
-#include "rpc/oauth.h"
+#include "oauth.h"
 
 bool_t
 xdr_access_token_t(XDR *xdrs, access_token_t *objp)

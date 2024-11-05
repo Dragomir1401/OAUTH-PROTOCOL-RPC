@@ -4,10 +4,10 @@
  */
 
 #include <memory.h> /* for memset */
-#include "rpc/oauth.h"
+#include "oauth.h"
 
 /* Default timeout can be changed using clnt_control() */
-static struct timeval TIMEOUT = { 25, 0 };
+static struct timeval TIMEOUT = {25, 0};
 
 char **
 attemp_auth_1(char **argp, CLIENT *clnt)
@@ -15,10 +15,11 @@ attemp_auth_1(char **argp, CLIENT *clnt)
 	static char *clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call (clnt, attemp_auth,
-		(xdrproc_t) xdr_wrapstring, (caddr_t) argp,
-		(xdrproc_t) xdr_wrapstring, (caddr_t) &clnt_res,
-		TIMEOUT) != RPC_SUCCESS) {
+	if (clnt_call(clnt, attemp_auth,
+				  (xdrproc_t)xdr_wrapstring, (caddr_t)argp,
+				  (xdrproc_t)xdr_wrapstring, (caddr_t)&clnt_res,
+				  TIMEOUT) != RPC_SUCCESS)
+	{
 		return (NULL);
 	}
 	return (&clnt_res);
@@ -30,10 +31,11 @@ request_access_token_1(request_authorization_t *argp, CLIENT *clnt)
 	static access_token_t clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call (clnt, request_access_token,
-		(xdrproc_t) xdr_request_authorization_t, (caddr_t) argp,
-		(xdrproc_t) xdr_access_token_t, (caddr_t) &clnt_res,
-		TIMEOUT) != RPC_SUCCESS) {
+	if (clnt_call(clnt, request_access_token,
+				  (xdrproc_t)xdr_request_authorization_t, (caddr_t)argp,
+				  (xdrproc_t)xdr_access_token_t, (caddr_t)&clnt_res,
+				  TIMEOUT) != RPC_SUCCESS)
+	{
 		return (NULL);
 	}
 	return (&clnt_res);

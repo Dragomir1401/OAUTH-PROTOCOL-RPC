@@ -1,4 +1,4 @@
-#include "oauth.h"
+#include "../../rpc/oauth.h"
 #include <unordered_map>
 
 class ClientModel

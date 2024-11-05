@@ -1,4 +1,4 @@
-#include "server_model/server_model.hpp"
+#include "../server_model/server_model.hpp"
 
 class ServerModelSingleton
 {
