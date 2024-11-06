@@ -8,6 +8,9 @@ RPCGEN = rpcgen
 RPC_SRC = rpc/oauth.x
 RPC_GEN_FILES = rpc/oauth.h rpc/oauth_clnt.c rpc/oauth_svc.c rpc/oauth_xdr.c
 
+
+all: $(CLIENT) $(SERVER)
+
 # Rule for generating RPC files
 rpcgen_files: $(RPC_GEN_FILES)
 
@@ -31,9 +34,6 @@ $(CLIENT): $(CLIENT_SRC) $(RPC_GEN_FILES)
 
 $(SERVER): $(SERVER_SRC) $(RPC_GEN_FILES)
 	$(CXX) $(CXX_FLAGS) -o $(SERVER) $(SERVER_SRC)
-
-# Combined rule to run rpcgen and build client and server
-all: build
 
 clean:
 	rm -f $(CLIENT) $(SERVER) $(RPC_GEN_FILES)
