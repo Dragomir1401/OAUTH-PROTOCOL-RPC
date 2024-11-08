@@ -22,11 +22,6 @@ struct delegated_action_request_t {
     string access_token<>;
 };
 
-enum response_codes_to_attempt_auth {
-    NOT_FOUND = 0
-};
-
-
 program OAUTH_PROTOCOL {
     version OAUTH_VERSION {
         string request_authorization(string) = 1;

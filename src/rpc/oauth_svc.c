@@ -11,15 +11,18 @@
 #include <memory.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include "../../data/server_model/server_model.h"
+#include <iostream>
 
 #ifndef SIG_PF
-#define SIG_PF void(*)(int)
+#define SIG_PF void (*)(int)
 #endif
 
 static void
 oauth_protocol_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
-	union {
+	union
+	{
 		char *request_authorization_1_arg;
 		access_token_request_t request_access_token_1_arg;
 		delegated_action_request_t validate_delegated_action_1_arg;
@@ -30,90 +33,228 @@ oauth_protocol_1(struct svc_req *rqstp, register SVCXPRT *transp)
 	xdrproc_t _xdr_argument, _xdr_result;
 	char *(*local)(char *, struct svc_req *);
 
-	switch (rqstp->rq_proc) {
+	switch (rqstp->rq_proc)
+	{
 	case NULLPROC:
-		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
+		(void)svc_sendreply(transp, (xdrproc_t)xdr_void, (char *)NULL);
 		return;
 
 	case request_authorization:
-		_xdr_argument = (xdrproc_t) xdr_wrapstring;
-		_xdr_result = (xdrproc_t) xdr_wrapstring;
-		local = (char *(*)(char *, struct svc_req *)) request_authorization_1_svc;
+		_xdr_argument = (xdrproc_t)xdr_wrapstring;
+		_xdr_result = (xdrproc_t)xdr_wrapstring;
+		local = (char *(*)(char *, struct svc_req *))request_authorization_1_svc;
 		break;
 
 	case request_access_token:
-		_xdr_argument = (xdrproc_t) xdr_access_token_request_t;
-		_xdr_result = (xdrproc_t) xdr_access_token_t;
-		local = (char *(*)(char *, struct svc_req *)) request_access_token_1_svc;
+		_xdr_argument = (xdrproc_t)xdr_access_token_request_t;
+		_xdr_result = (xdrproc_t)xdr_access_token_t;
+		local = (char *(*)(char *, struct svc_req *))request_access_token_1_svc;
 		break;
 
 	case validate_delegated_action:
-		_xdr_argument = (xdrproc_t) xdr_delegated_action_request_t;
-		_xdr_result = (xdrproc_t) xdr_wrapstring;
-		local = (char *(*)(char *, struct svc_req *)) validate_delegated_action_1_svc;
+		_xdr_argument = (xdrproc_t)xdr_delegated_action_request_t;
+		_xdr_result = (xdrproc_t)xdr_wrapstring;
+		local = (char *(*)(char *, struct svc_req *))validate_delegated_action_1_svc;
 		break;
 
 	case approve_request_token:
-		_xdr_argument = (xdrproc_t) xdr_wrapstring;
-		_xdr_result = (xdrproc_t) xdr_wrapstring;
-		local = (char *(*)(char *, struct svc_req *)) approve_request_token_1_svc;
+		_xdr_argument = (xdrproc_t)xdr_wrapstring;
+		_xdr_result = (xdrproc_t)xdr_wrapstring;
+		local = (char *(*)(char *, struct svc_req *))approve_request_token_1_svc;
 		break;
 
 	case refresh_access:
-		_xdr_argument = (xdrproc_t) xdr_access_token_t;
-		_xdr_result = (xdrproc_t) xdr_access_token_t;
-		local = (char *(*)(char *, struct svc_req *)) refresh_access_1_svc;
+		_xdr_argument = (xdrproc_t)xdr_access_token_t;
+		_xdr_result = (xdrproc_t)xdr_access_token_t;
+		local = (char *(*)(char *, struct svc_req *))refresh_access_1_svc;
 		break;
 
 	default:
-		svcerr_noproc (transp);
+		svcerr_noproc(transp);
 		return;
 	}
-	memset ((char *)&argument, 0, sizeof (argument));
-	if (!svc_getargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
-		svcerr_decode (transp);
+	memset((char *)&argument, 0, sizeof(argument));
+	if (!svc_getargs(transp, (xdrproc_t)_xdr_argument, (caddr_t)&argument))
+	{
+		svcerr_decode(transp);
 		return;
 	}
 	result = (*local)((char *)&argument, rqstp);
-	if (result != NULL && !svc_sendreply(transp, (xdrproc_t) _xdr_result, result)) {
-		svcerr_systemerr (transp);
+	if (result != NULL && !svc_sendreply(transp, (xdrproc_t)_xdr_result, result))
+	{
+		svcerr_systemerr(transp);
 	}
-	if (!svc_freeargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
-		fprintf (stderr, "%s", "unable to free arguments");
-		exit (1);
+	if (!svc_freeargs(transp, (xdrproc_t)_xdr_argument, (caddr_t)&argument))
+	{
+		fprintf(stderr, "%s", "unable to free arguments");
+		exit(1);
 	}
 	return;
 }
 
-int
-main (int argc, char **argv)
+void readUsersFile(char *file)
 {
-	register SVCXPRT *transp;
-
-	pmap_unset (OAUTH_PROTOCOL, OAUTH_VERSION);
-
-	transp = svcudp_create(RPC_ANYSOCK);
-	if (transp == NULL) {
-		fprintf (stderr, "%s", "cannot create udp service.");
+	// open file with fopen
+	FILE *fp = fopen(file, "r");
+	if (fp == NULL)
+	{
+		printf("Could not open file %s\n", file);
 		exit(1);
 	}
-	if (!svc_register(transp, OAUTH_PROTOCOL, OAUTH_VERSION, oauth_protocol_1, IPPROTO_UDP)) {
-		fprintf (stderr, "%s", "unable to register (OAUTH_PROTOCOL, OAUTH_VERSION, udp).");
+
+	// read first line as number of users
+	int num_users;
+	fscanf(fp, "%d\n", &num_users);
+
+	// read each user and add to user_list
+	for (int i = 0; i < num_users; i++)
+	{
+		char user[100];
+		fscanf(fp, "%s\n", user);
+		user_list.push_back(user);
+	}
+}
+
+void readResourcesFile(char *file)
+{
+	// open file with fopen
+	FILE *fp = fopen(file, "r");
+	if (fp == NULL)
+	{
+		printf("Could not open file %s\n", file);
+		exit(1);
+	}
+
+	// read first line as number of resources
+	int num_resources;
+	fscanf(fp, "%d\n", &num_resources);
+
+	// read each resource and add to resource_list
+	for (int i = 0; i < num_resources; i++)
+	{
+		char resource[100];
+		fscanf(fp, "%s\n", resource);
+		resource_list.push_back(resource);
+	}
+}
+
+void readApprovalsFile(char *file)
+{
+	// open file with fopen
+	FILE *fp = fopen(file, "r");
+	if (fp == NULL)
+	{
+		printf("Could not open file %s\n", file);
+		exit(1);
+	}
+
+	int user_counter = 0;
+
+	// read each line and add to approvals_list
+	while (!feof(fp))
+	{
+		// approvals come as format <resource>, <permission>, <resource>, <permission>, ...
+		char line[1000];
+		fscanf(fp, "%s\n", line);
+
+		// map for approvals of a user
+		std::unordered_map<std::string, std::string> user_approvals;
+
+		// split line by comma
+		int word_counter = 0;
+		char *token = strtok(line, ",");
+		char *resource = NULL;
+		while (token != NULL)
+		{
+			// if counter is even, it is a resource
+			if (word_counter % 2 == 0)
+			{
+				resource = token;
+			}
+			// if counter is odd, it is a permission
+			else
+			{
+				// transform resource and permission to string
+				std::string resource_str(resource);
+				std::string permission_str(token);
+
+				// add to user_approvals
+				user_approvals[resource_str] = permission_str;
+			}
+			word_counter++;
+			token = strtok(NULL, ",");
+		}
+
+		user_counter++;
+		user_to_approvals_list.push_back(user_approvals);
+	}
+}
+
+int main(int argc, char **argv)
+{
+	register SVCXPRT *transp;
+	if (argc < 5)
+	{
+		printf("Wrong usage. Correct usage: %s <users_file> <resources_file> <approvals_file> "
+			   "<token_lifetime>\n",
+			   argv[0]);
+		exit(1);
+	}
+
+	readUsersFile(argv[1]);
+	// print the users
+	for (std::string user : user_list)
+	{
+		std::cout << user << std::endl;
+	}
+
+	readResourcesFile(argv[2]);
+	// print the resources
+	for (std::string resource : resource_list)
+	{
+		std::cout << resource << std::endl;
+	}
+
+	readApprovalsFile(argv[3]);
+	// print the approvals
+	int user_counter = 0;
+	for (std::unordered_map<std::string, std::string> user_approvals : user_to_approvals_list)
+	{
+		std::cout << "User " << user_counter++ << std::endl;
+		for (auto const &x : user_approvals)
+		{
+			std::cout << "Resource: " << x.first << " Permission: " << x.second << std::endl;
+		}
+	}
+
+	pmap_unset(OAUTH_PROTOCOL, OAUTH_VERSION);
+
+	transp = svcudp_create(RPC_ANYSOCK);
+	if (transp == NULL)
+	{
+		fprintf(stderr, "%s", "cannot create udp service.");
+		exit(1);
+	}
+	if (!svc_register(transp, OAUTH_PROTOCOL, OAUTH_VERSION, oauth_protocol_1, IPPROTO_UDP))
+	{
+		fprintf(stderr, "%s", "unable to register (OAUTH_PROTOCOL, OAUTH_VERSION, udp).");
 		exit(1);
 	}
 
 	transp = svctcp_create(RPC_ANYSOCK, 0, 0);
-	if (transp == NULL) {
-		fprintf (stderr, "%s", "cannot create tcp service.");
+	if (transp == NULL)
+	{
+		fprintf(stderr, "%s", "cannot create tcp service.");
 		exit(1);
 	}
-	if (!svc_register(transp, OAUTH_PROTOCOL, OAUTH_VERSION, oauth_protocol_1, IPPROTO_TCP)) {
-		fprintf (stderr, "%s", "unable to register (OAUTH_PROTOCOL, OAUTH_VERSION, tcp).");
+	if (!svc_register(transp, OAUTH_PROTOCOL, OAUTH_VERSION, oauth_protocol_1, IPPROTO_TCP))
+	{
+		fprintf(stderr, "%s", "unable to register (OAUTH_PROTOCOL, OAUTH_VERSION, tcp).");
 		exit(1);
 	}
 
-	svc_run ();
-	fprintf (stderr, "%s", "svc_run returned");
-	exit (1);
+	svc_run();
+	fprintf(stderr, "%s", "svc_run returned");
+	exit(1);
 	/* NOTREACHED */
 }

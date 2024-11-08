@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 {
     if (argc < 3)
     {
-        printf("Wrong. Correct usage: %s <client_addr> <operation_file>\n", argv[0]);
+        printf("Wrong usage. Correct usage: %s <client_addr> <operation_file>\n", argv[0]);
         exit(1);
     }
 

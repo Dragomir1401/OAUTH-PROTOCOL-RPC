@@ -1,0 +1,1 @@
+./server ../tst/tests/test1/userIDs.db ../tst/tests/test1/resources.db ../tst/tests/test1/approvals.db 3

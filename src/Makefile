@@ -1,12 +1,10 @@
 CXX = g++
-CXX_FLAGS = -Wall -lnsl -g -I./rpc -I./data/client_model
+CXX_FLAGS = -lnsl -g -I./rpc -I./data/client_model
 CLIENT = client
-CLIENT_SRC = rpc/oauth_clnt.c rpc/oauth_xdr.c data/client_model/client_model.cpp data/client_data/client_instance.cpp client.cpp
+CLIENT_SRC = rpc/oauth_clnt.cpp rpc/oauth_xdr.c
 SERVER = server
-SERVER_SRC = rpc/oauth_svc.c rpc/oauth_xdr.c data/server_model/server_model.cpp data/server_data/server_instance.cpp
-RPCGEN = rpcgen
-RPC_SRC = /rpc/oauth.x
-RPC_GEN_FILES = rpc/oauth.h rpc/oauth_clnt.c rpc/oauth_svc.c rpc/oauth_xdr.c
+SERVER_SRC = rpc/oauth_server.cpp rpc/oauth_svc.c rpc/oauth_xdr.c data/server_model/server_model.cpp
+RPC_GEN_FILES = rpc/Makefile.oauth rpc/oauth_client.cpp rpc/oauth_clnt.c rpc/oauth_server.cpp rpc/oauth_svc.c rpc/oauth_xdr.c rpc/oauth.h
 
 
 all: $(CLIENT) $(SERVER)

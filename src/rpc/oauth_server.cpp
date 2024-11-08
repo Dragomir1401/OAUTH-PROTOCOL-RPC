@@ -5,23 +5,43 @@
  */
 
 #include "oauth.h"
+#include "../../data/server_model/server_model.h"
+#include "../utils/token.h"
+#include "../utils/res_codes.hpp"
+#include <iostream>
+
+void log(std::string message)
+{
+	std::cout << message << std::endl;
+}
 
 char **
 request_authorization_1_svc(char **argp, struct svc_req *rqstp)
 {
-	static char * result;
+	static char *result;
+	log("========= REQUEST AUTHORIZATION =========");
 
-	/*
-	 * insert server code here
-	 */
+	char *user_id = argp[0];
 
+	for (std::string user : user_list)
+	{
+		if (user == user_id)
+		{
+			log("User found");
+			result = generate_access_token(user_id);
+			return &result;
+		}
+	}
+
+	log("User not found");
+	strcpy(result, ResponseCodes::getString(ResponseCodes::USER_NOT_FOUND).c_str());
 	return &result;
 }
 
 access_token_t *
 request_access_token_1_svc(access_token_request_t *argp, struct svc_req *rqstp)
 {
-	static access_token_t  result;
+	static access_token_t result;
 
 	/*
 	 * insert server code here
@@ -33,7 +53,7 @@ request_access_token_1_svc(access_token_request_t *argp, struct svc_req *rqstp)
 char **
 validate_delegated_action_1_svc(delegated_action_request_t *argp, struct svc_req *rqstp)
 {
-	static char * result;
+	static char *result;
 
 	/*
 	 * insert server code here
@@ -45,7 +65,7 @@ validate_delegated_action_1_svc(delegated_action_request_t *argp, struct svc_req
 char **
 approve_request_token_1_svc(char **argp, struct svc_req *rqstp)
 {
-	static char * result;
+	static char *result;
 
 	/*
 	 * insert server code here
@@ -57,7 +77,7 @@ approve_request_token_1_svc(char **argp, struct svc_req *rqstp)
 access_token_t *
 refresh_access_1_svc(access_token_t *argp, struct svc_req *rqstp)
 {
-	static access_token_t  result;
+	static access_token_t result;
 
 	/*
 	 * insert server code here
