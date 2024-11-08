@@ -11,6 +11,8 @@ public:
     OperationProcessor(std::vector<Operation *> operations);
     ~OperationProcessor();
     void process_operations();
+    access_token_request_t process_request(Operation *operation, CLIENT *client);
+    void log(std::string message);
 
 private:
     std::vector<Operation *> operations;

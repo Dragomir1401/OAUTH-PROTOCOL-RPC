@@ -4,7 +4,13 @@
 #define REQUEST "REQUEST"
 #define MODIFY "MODIFY"
 #define INSERT "INSERT"
-
+#define DELETE "DELETE"
+#define READ "READ"
+#define NO_RESOURCE "NO_RESOURCE"
+#define EXECUTE "EXECUTE"
+#define ON 1
+#define OFF 0
+#define NOT_APPLICABLE -1
 class Operation
 {
 public:
@@ -17,6 +23,7 @@ public:
     bool is_request();
     bool is_modify();
     bool is_insert();
+    std::string to_string();
 
 private:
     std::string user_id;

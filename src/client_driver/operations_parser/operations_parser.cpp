@@ -25,8 +25,8 @@ std::vector<Operation *> OperationsParser::parse_operations()
         line = line.substr(line.find(',') + 1);
         std::string action = line.substr(0, line.find(','));
 
-        int auto_refresh = 0;
-        std::string resource = "";
+        int auto_refresh = NOT_APPLICABLE;
+        std::string resource = NO_RESOURCE;
 
         if (action == REQUEST)
         {
@@ -34,7 +34,7 @@ std::vector<Operation *> OperationsParser::parse_operations()
             line = line.substr(line.find(',') + 1);
             auto_refresh = std::stoi(line);
         }
-        else if (action == MODIFY || action == INSERT)
+        else if (action == MODIFY || action == INSERT || action == DELETE || action == READ || action == EXECUTE)
         {
             // rest of the line is the resource
             line = line.substr(line.find(',') + 1);
@@ -46,6 +46,7 @@ std::vector<Operation *> OperationsParser::parse_operations()
         }
 
         Operation *operation = new Operation(user_id, action, resource, auto_refresh);
+        // add operation to operations list
         operations.push_back(operation);
     }
 
@@ -55,4 +56,9 @@ std::vector<Operation *> OperationsParser::parse_operations()
 void OperationsParser::set_input_file(char *input_file)
 {
     this->input_file = input_file;
+}
+
+void OperationsParser::log(std::string message)
+{
+    std::cout << message << std::endl;
 }

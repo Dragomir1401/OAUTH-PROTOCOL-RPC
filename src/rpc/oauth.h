@@ -92,7 +92,6 @@ extern int oauth_protocol_1_freeresult();
 	extern bool_t xdr_request_authorization_t(XDR *, request_authorization_t *);
 	extern bool_t xdr_access_token_request_t(XDR *, access_token_request_t *);
 	extern bool_t xdr_delegated_action_request_t(XDR *, delegated_action_request_t *);
-	extern bool_t xdr_response_codes_to_attempt_auth(XDR *, response_codes_to_attempt_auth *);
 
 #else /* K&R C */
 extern bool_t xdr_access_token_t();

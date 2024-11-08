@@ -5,9 +5,9 @@
  */
 
 #include "oauth.h"
-#include " ../client_driver/operations_parser/operations_parser.hpp"
-#include " ../client_driver/operations/operation.hpp"
-#include " ../client_driver/operations_processor/operations_processor.hpp"
+#include "../client_driver/operations_parser/operations_parser.hpp"
+#include "../client_driver/operations/operation.hpp"
+#include "../client_driver/operations_processor/operations_processor.hpp"
 
 void oauth_protocol_1(char *host)
 {
@@ -72,6 +72,9 @@ int main(int argc, char *argv[])
 
 	OperationsParser *operations_parser = new OperationsParser(argv[2]);
 	std::vector<Operation *> operations = operations_parser->parse_operations();
+
+	OperationProcessor *operation_processor = new OperationProcessor(operations);
+	operation_processor->process_operations();
 
 	exit(0);
 }
