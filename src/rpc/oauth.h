@@ -28,6 +28,20 @@ struct request_authorization_t {
 };
 typedef struct request_authorization_t request_authorization_t;
 
+struct access_token_request_t {
+	char *user_id;
+	char *authentification_token;
+	int auto_refresh;
+};
+typedef struct access_token_request_t access_token_request_t;
+
+struct delegated_action_request_t {
+	char *operation_type;
+	char *resource;
+	char *access_token;
+};
+typedef struct delegated_action_request_t delegated_action_request_t;
+
 enum response_codes_to_attempt_auth {
 	NOT_FOUND = 0,
 };
@@ -37,21 +51,39 @@ typedef enum response_codes_to_attempt_auth response_codes_to_attempt_auth;
 #define OAUTH_VERSION 1
 
 #if defined(__STDC__) || defined(__cplusplus)
-#define attemp_auth 1
-extern  char ** attemp_auth_1(char **, CLIENT *);
-extern  char ** attemp_auth_1_svc(char **, struct svc_req *);
+#define request_authorization 1
+extern  char ** request_authorization_1(char **, CLIENT *);
+extern  char ** request_authorization_1_svc(char **, struct svc_req *);
 #define request_access_token 2
-extern  access_token_t * request_access_token_1(request_authorization_t *, CLIENT *);
-extern  access_token_t * request_access_token_1_svc(request_authorization_t *, struct svc_req *);
+extern  access_token_t * request_access_token_1(access_token_request_t *, CLIENT *);
+extern  access_token_t * request_access_token_1_svc(access_token_request_t *, struct svc_req *);
+#define validate_delegated_action 3
+extern  char ** validate_delegated_action_1(delegated_action_request_t *, CLIENT *);
+extern  char ** validate_delegated_action_1_svc(delegated_action_request_t *, struct svc_req *);
+#define approve_request_token 4
+extern  char ** approve_request_token_1(char **, CLIENT *);
+extern  char ** approve_request_token_1_svc(char **, struct svc_req *);
+#define refresh_access 5
+extern  access_token_t * refresh_access_1(access_token_t *, CLIENT *);
+extern  access_token_t * refresh_access_1_svc(access_token_t *, struct svc_req *);
 extern int oauth_protocol_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
-#define attemp_auth 1
-extern  char ** attemp_auth_1();
-extern  char ** attemp_auth_1_svc();
+#define request_authorization 1
+extern  char ** request_authorization_1();
+extern  char ** request_authorization_1_svc();
 #define request_access_token 2
 extern  access_token_t * request_access_token_1();
 extern  access_token_t * request_access_token_1_svc();
+#define validate_delegated_action 3
+extern  char ** validate_delegated_action_1();
+extern  char ** validate_delegated_action_1_svc();
+#define approve_request_token 4
+extern  char ** approve_request_token_1();
+extern  char ** approve_request_token_1_svc();
+#define refresh_access 5
+extern  access_token_t * refresh_access_1();
+extern  access_token_t * refresh_access_1_svc();
 extern int oauth_protocol_1_freeresult ();
 #endif /* K&R C */
 
@@ -60,11 +92,15 @@ extern int oauth_protocol_1_freeresult ();
 #if defined(__STDC__) || defined(__cplusplus)
 extern  bool_t xdr_access_token_t (XDR *, access_token_t*);
 extern  bool_t xdr_request_authorization_t (XDR *, request_authorization_t*);
+extern  bool_t xdr_access_token_request_t (XDR *, access_token_request_t*);
+extern  bool_t xdr_delegated_action_request_t (XDR *, delegated_action_request_t*);
 extern  bool_t xdr_response_codes_to_attempt_auth (XDR *, response_codes_to_attempt_auth*);
 
 #else /* K&R C */
 extern bool_t xdr_access_token_t ();
 extern bool_t xdr_request_authorization_t ();
+extern bool_t xdr_access_token_request_t ();
+extern bool_t xdr_delegated_action_request_t ();
 extern bool_t xdr_response_codes_to_attempt_auth ();
 
 #endif /* K&R C */

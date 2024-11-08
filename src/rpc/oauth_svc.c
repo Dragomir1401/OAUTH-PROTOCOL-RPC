@@ -3,7 +3,7 @@
  * It was generated using rpcgen.
  */
 
-#include "rpc/oauth.h"
+#include "oauth.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <rpc/pmap_clnt.h>
@@ -16,12 +16,15 @@
 #define SIG_PF void(*)(int)
 #endif
 
-void
+static void
 oauth_protocol_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
 	union {
-		char *attemp_auth_1_arg;
-		request_authorization_t request_access_token_1_arg;
+		char *request_authorization_1_arg;
+		access_token_request_t request_access_token_1_arg;
+		delegated_action_request_t validate_delegated_action_1_arg;
+		char *approve_request_token_1_arg;
+		access_token_t refresh_access_1_arg;
 	} argument;
 	char *result;
 	xdrproc_t _xdr_argument, _xdr_result;
@@ -32,16 +35,34 @@ oauth_protocol_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
 		return;
 
-	case attemp_auth:
+	case request_authorization:
 		_xdr_argument = (xdrproc_t) xdr_wrapstring;
 		_xdr_result = (xdrproc_t) xdr_wrapstring;
-		local = (char *(*)(char *, struct svc_req *)) attemp_auth_1_svc;
+		local = (char *(*)(char *, struct svc_req *)) request_authorization_1_svc;
 		break;
 
 	case request_access_token:
-		_xdr_argument = (xdrproc_t) xdr_request_authorization_t;
+		_xdr_argument = (xdrproc_t) xdr_access_token_request_t;
 		_xdr_result = (xdrproc_t) xdr_access_token_t;
 		local = (char *(*)(char *, struct svc_req *)) request_access_token_1_svc;
+		break;
+
+	case validate_delegated_action:
+		_xdr_argument = (xdrproc_t) xdr_delegated_action_request_t;
+		_xdr_result = (xdrproc_t) xdr_wrapstring;
+		local = (char *(*)(char *, struct svc_req *)) validate_delegated_action_1_svc;
+		break;
+
+	case approve_request_token:
+		_xdr_argument = (xdrproc_t) xdr_wrapstring;
+		_xdr_result = (xdrproc_t) xdr_wrapstring;
+		local = (char *(*)(char *, struct svc_req *)) approve_request_token_1_svc;
+		break;
+
+	case refresh_access:
+		_xdr_argument = (xdrproc_t) xdr_access_token_t;
+		_xdr_result = (xdrproc_t) xdr_access_token_t;
+		local = (char *(*)(char *, struct svc_req *)) refresh_access_1_svc;
 		break;
 
 	default:
@@ -62,4 +83,37 @@ oauth_protocol_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		exit (1);
 	}
 	return;
+}
+
+int
+main (int argc, char **argv)
+{
+	register SVCXPRT *transp;
+
+	pmap_unset (OAUTH_PROTOCOL, OAUTH_VERSION);
+
+	transp = svcudp_create(RPC_ANYSOCK);
+	if (transp == NULL) {
+		fprintf (stderr, "%s", "cannot create udp service.");
+		exit(1);
+	}
+	if (!svc_register(transp, OAUTH_PROTOCOL, OAUTH_VERSION, oauth_protocol_1, IPPROTO_UDP)) {
+		fprintf (stderr, "%s", "unable to register (OAUTH_PROTOCOL, OAUTH_VERSION, udp).");
+		exit(1);
+	}
+
+	transp = svctcp_create(RPC_ANYSOCK, 0, 0);
+	if (transp == NULL) {
+		fprintf (stderr, "%s", "cannot create tcp service.");
+		exit(1);
+	}
+	if (!svc_register(transp, OAUTH_PROTOCOL, OAUTH_VERSION, oauth_protocol_1, IPPROTO_TCP)) {
+		fprintf (stderr, "%s", "unable to register (OAUTH_PROTOCOL, OAUTH_VERSION, tcp).");
+		exit(1);
+	}
+
+	svc_run ();
+	fprintf (stderr, "%s", "svc_run returned");
+	exit (1);
+	/* NOTREACHED */
 }
