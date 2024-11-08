@@ -10,6 +10,10 @@ struct request_authorization_t {
     bool refresh_token;
 };
 
+enum response_codes_to_attempt_auth {
+    NOT_FOUND = 0
+};
+
 
 program OAUTH_PROTOCOL {
     version OAUTH_VERSION {

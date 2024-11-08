@@ -1,5 +1,8 @@
 #include "../operations_parser/operations_parser.hpp"
 #include "../operations/operation.hpp"
+#include "oauth.h"
+
+#define LOCALHOST "127.0.0.1"
 
 class OperationProcessor
 {

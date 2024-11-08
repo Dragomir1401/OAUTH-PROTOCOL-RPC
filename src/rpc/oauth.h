@@ -28,6 +28,11 @@ struct request_authorization_t {
 };
 typedef struct request_authorization_t request_authorization_t;
 
+enum response_codes_to_attempt_auth {
+	NOT_FOUND = 0,
+};
+typedef enum response_codes_to_attempt_auth response_codes_to_attempt_auth;
+
 #define OAUTH_PROTOCOL 0x31234567
 #define OAUTH_VERSION 1
 
@@ -55,10 +60,12 @@ extern int oauth_protocol_1_freeresult ();
 #if defined(__STDC__) || defined(__cplusplus)
 extern  bool_t xdr_access_token_t (XDR *, access_token_t*);
 extern  bool_t xdr_request_authorization_t (XDR *, request_authorization_t*);
+extern  bool_t xdr_response_codes_to_attempt_auth (XDR *, response_codes_to_attempt_auth*);
 
 #else /* K&R C */
 extern bool_t xdr_access_token_t ();
 extern bool_t xdr_request_authorization_t ();
+extern bool_t xdr_response_codes_to_attempt_auth ();
 
 #endif /* K&R C */
 
