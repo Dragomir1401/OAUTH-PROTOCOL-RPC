@@ -13,6 +13,7 @@ public:
     void add_access_token(std::string user_id, access_token_t access_token);
     void remove_access_token(std::string user_id);
     void log(std::string log);
+    std::unordered_map<std::string, access_token_t> get_user_to_access_token();
 
 private:
     std::unordered_map<std::string, access_token_t> user_to_access_token;

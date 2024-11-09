@@ -18,6 +18,7 @@ public:
     };
     Token();
     Token(std::string token, std::string user_id, int lifetime, TOKEN_STATUS status);
+    Token(std::string token, std::string refresh_token, std::string user_id, int lifetime, TOKEN_STATUS status);
     Token(std::unordered_map<std::string, std::string> approvals, std::string token, std::string user_id, int lifetime, TOKEN_STATUS status);
     ~Token();
     std::unordered_map<std::string, std::string> get_approvals();
@@ -30,6 +31,7 @@ public:
     void add_refresh_token(std::string refresh_token);
     void sign();
     void log(std::string message);
+    void decrease_lifetime();
 
 private:
     std::unordered_map<std::string, std::string> approvals;
@@ -44,7 +46,7 @@ extern std::vector<std::string> user_list;
 extern std::vector<std::string> resource_list;
 extern std::unordered_map<std::string, std::unordered_map<std::string, std::string>> user_to_approvals_list;
 extern std::vector<Token> auth_token_list;
-extern std::unordered_map<std::string, std::string> user_to_access_token;
+extern std::unordered_map<std::string, Token> user_to_access_token;
 extern int global_token_lifetime;
 
 #endif

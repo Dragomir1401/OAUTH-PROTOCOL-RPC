@@ -23,6 +23,8 @@ public:
     bool is_request();
     bool is_modify();
     bool is_insert();
+    bool is_delete();
+    bool is_read();
     std::string to_string();
 
 private:

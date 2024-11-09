@@ -4,7 +4,7 @@ std::vector<std::string> user_list;
 std::vector<std::string> resource_list;
 std::unordered_map<std::string, std::unordered_map<std::string, std::string>> user_to_approvals_list;
 std::vector<Token> auth_token_list;
-std::unordered_map<std::string, std::string> user_to_access_token;
+std::unordered_map<std::string, Token> user_to_access_token;
 int global_token_lifetime;
 
 Token::Token()
@@ -14,6 +14,15 @@ Token::Token()
 Token::Token(std::string token, std::string user_id, int lifetime, TOKEN_STATUS status)
 {
     this->token = token;
+    this->user_id = user_id;
+    this->lifetime = lifetime;
+    this->status = status;
+}
+
+Token::Token(std::string token, std::string refresh_token, std::string user_id, int lifetime, TOKEN_STATUS status)
+{
+    this->token = token;
+    this->refresh_token = refresh_token;
     this->user_id = user_id;
     this->lifetime = lifetime;
     this->status = status;
@@ -91,4 +100,9 @@ void Token::sign()
 void Token::log(std::string message)
 {
     std::cout << message << std::endl;
+}
+
+void Token::decrease_lifetime()
+{
+    this->lifetime--;
 }

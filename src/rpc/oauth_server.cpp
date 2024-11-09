@@ -9,6 +9,7 @@
 #include "../utils/token.h"
 #include "../utils/res_codes.hpp"
 #include <iostream>
+#include <algorithm>
 
 void log(std::string message)
 {
@@ -91,8 +92,15 @@ request_access_token_1_svc(access_token_request_t *argp, struct svc_req *rqstp)
 				}
 
 				// Add the access token to the user to access token map
-				log("Adding access token for user " + user_id + " to the user to access token map");
-				user_to_access_token[user_id] = access_token_str;
+				log("Adding access token " + access_token_str + " to the user " + user_id + " in the user_to_access_token map");
+				user_to_access_token[user_id] = access_token;
+
+				// log the permissions that this access token has
+				std::unordered_map<std::string, std::string> access_token_approvals = access_token.get_approvals();
+				for (auto const &approval : access_token_approvals)
+				{
+					log("Approval for this access token: " + approval.first + " " + approval.second);
+				}
 
 				// return the access token
 				result.access_token = strdup(access_token_str.c_str());
@@ -127,10 +135,84 @@ validate_delegated_action_1_svc(delegated_action_request_t *argp, struct svc_req
 {
 	static char *result;
 
-	/*
-	 * insert server code here
-	 */
+	// parse the arguments
+	std::string operation_type = argp->operation_type;
+	std::string resource = argp->resource;
+	std::string access_token_str = argp->access_token;
 
+	log("========= VALIDATE DELEGATED ACTION =========");
+	log("Validating delegated action for user with access token " + access_token_str + " for operation " + operation_type + " on resource " + resource);
+
+	// check if the access token is in the user_to_access_token map
+	for (auto const &user_access_token : user_to_access_token)
+	{
+		Token user_access_token_i = user_access_token.second;
+		if (user_access_token_i.get_token() == access_token_str)
+		{
+			// get the access token based on the user id
+			Token access_token = user_to_access_token[user_access_token.first];
+
+			// based on the token, find the token in the
+			log("Access token with id " + access_token_str + " found for user " + user_access_token.first);
+
+			// check if the token is expired
+			if (access_token.get_lifetime() <= 0)
+			{
+				log("Access token expired");
+				result = strdup(ResponseCodes::getString(ResponseCodes::TOKEN_EXPIRED).c_str());
+				return &result;
+			}
+
+			// decrease the lifetime of the token
+			access_token.decrease_lifetime();
+
+			// check if the resource exists in the resource_list
+			if (std::find(resource_list.begin(), resource_list.end(), resource) == resource_list.end())
+			{
+				log("Resource not found");
+				result = strdup(ResponseCodes::getString(ResponseCodes::RESOURCE_NOT_FOUND).c_str());
+				return &result;
+			}
+
+			// check if the user has the permission to perform the action
+			std::unordered_map<std::string, std::string> approvals = access_token.get_approvals();
+
+			// log if the approvals are empty
+			if (approvals.empty())
+			{
+				log("No approvals found for the user");
+			}
+
+			// print the approvals
+			for (auto const &approval : approvals)
+			{
+				log("Approval: " + approval.first + " " + approval.second);
+			}
+
+			if (approvals.find(resource) != approvals.end())
+			{
+				log("User has the permission to perform the action");
+				result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_GRANTED).c_str());
+				return &result;
+			}
+			else
+			{
+				log("User does not have the permission to perform the action");
+				result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_DENIED).c_str());
+				return &result;
+			}
+		}
+		else
+		{
+			log("Access token not found");
+			result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_DENIED).c_str());
+			return &result;
+		}
+	}
+
+	// if the access token is not found return an error
+	log("Access token not found");
+	result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_DENIED).c_str());
 	return &result;
 }
 
@@ -224,9 +306,47 @@ refresh_access_1_svc(access_token_t *argp, struct svc_req *rqstp)
 {
 	static access_token_t result;
 
-	/*
-	 * insert server code here
-	 */
+	// parse the arguments
+	std::string access_token_str = argp->access_token;
+	std::string refresh_token_str = argp->refresh_token;
+
+	log("========= REFRESH ACCESS TOKEN =========");
+	log("Refresh access token with access token " + access_token_str + " and refresh token " + refresh_token_str);
+
+	// find the access token in the user_to_access_token map
+	for (auto const &user_access_token : user_to_access_token)
+	{
+		Token user_access_token_i = user_access_token.second;
+		if (user_access_token_i.get_token() == access_token_str)
+		{
+			log("Access token found. Refreshing it");
+
+			// generate a new access token
+			std::string new_access_token = generate_access_token(strdup(refresh_token_str.c_str()));
+
+			// generate a new refresh token
+			std::string new_refresh_token = generate_access_token(strdup(new_access_token.c_str()));
+
+			// generate a new access token instance
+			Token new_access_token_i = Token(new_access_token, new_refresh_token, user_access_token_i.get_user_id(), global_token_lifetime, Token::ACCESS);
+
+			// update the access token in the user_to_access_token map
+			user_to_access_token[user_access_token.first] = new_access_token_i;
+
+			// return the new access token
+			result.access_token = strdup(new_access_token.c_str());
+			result.refresh_token = strdup(new_refresh_token.c_str());
+			result.expiration = global_token_lifetime;
+
+			return &result;
+		}
+	}
+
+	// if the access token is not found return an error
+	log("Access token not found. Could not refresh it");
+	result.access_token = strdup(ResponseCodes::getString(ResponseCodes::TOKEN_EXPIRED).c_str());
+	result.refresh_token = strdup(ResponseCodes::getString(ResponseCodes::TOKEN_EXPIRED).c_str());
+	result.expiration = -1;
 
 	return &result;
 }

@@ -47,6 +47,16 @@ bool Operation::is_insert()
     return action == INSERT;
 }
 
+bool Operation::is_delete()
+{
+    return action == DELETE;
+}
+
+bool Operation::is_read()
+{
+    return action == READ;
+}
+
 std::string Operation::to_string()
 {
     return "User: " + user_id + " Action: " + action + " Resource: " + resource + " Auto Refresh: " + std::to_string(auto_refresh);
