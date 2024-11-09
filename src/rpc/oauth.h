@@ -59,8 +59,8 @@ extern "C"
 	extern char **validate_delegated_action_1(delegated_action_request_t *, CLIENT *);
 	extern char **validate_delegated_action_1_svc(delegated_action_request_t *, struct svc_req *);
 #define approve_request_token 4
-	extern char **approve_request_token_1(char **, CLIENT *);
-	extern char **approve_request_token_1_svc(char **, struct svc_req *);
+	extern char **approve_request_token_1(request_authorization_t *, CLIENT *);
+	extern char **approve_request_token_1_svc(request_authorization_t *, struct svc_req *);
 #define refresh_access 5
 	extern access_token_t *refresh_access_1(access_token_t *, CLIENT *);
 	extern access_token_t *refresh_access_1_svc(access_token_t *, struct svc_req *);
@@ -98,7 +98,6 @@ extern bool_t xdr_access_token_t();
 extern bool_t xdr_request_authorization_t();
 extern bool_t xdr_access_token_request_t();
 extern bool_t xdr_delegated_action_request_t();
-extern bool_t xdr_response_codes_to_attempt_auth();
 
 #endif /* K&R C */
 

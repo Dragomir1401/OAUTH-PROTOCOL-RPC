@@ -27,7 +27,7 @@ program OAUTH_PROTOCOL {
         string request_authorization(string) = 1;
         access_token_t request_access_token(access_token_request_t) = 2;
         string validate_delegated_action(delegated_action_request_t) = 3;
-        string approve_request_token(string) = 4;
+        string approve_request_token(request_authorization_t) = 4;
         access_token_t refresh_access(access_token_t) = 5;
     } = 1;
 } = 0x31234567;

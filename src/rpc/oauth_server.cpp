@@ -29,6 +29,7 @@ request_authorization_1_svc(char **argp, struct svc_req *rqstp)
 		{
 			log("User found");
 			result = generate_access_token(user_id);
+			log("Token generated: " + std::string(result));
 			return &result;
 		}
 	}
@@ -43,9 +44,80 @@ request_access_token_1_svc(access_token_request_t *argp, struct svc_req *rqstp)
 {
 	static access_token_t result;
 
-	/*
-	 * insert server code here
-	 */
+	// parse the arguments
+	std::string user_id = argp->user_id;
+	std::string token_received = argp->authentification_token;
+	int auto_refresh = argp->auto_refresh;
+
+	log("========= REQUEST ACCESS TOKEN =========");
+	log("Request access token for user " + user_id + " with auth token " + token_received + " and auto refresh " + std::to_string(auto_refresh));
+
+	// search for the token in the token list
+	for (Token token : auth_token_list)
+	{
+		if (token.get_token() == token_received)
+		{
+			if (token.get_status() == Token::AUTH_SIGNED)
+			{
+				log("Token found and signed. Generating an access token");
+
+				// convert the token to char*
+				char *token_received_c = strdup(token.get_token().c_str());
+
+				// generate access token
+				std::string access_token_str = generate_access_token(token_received_c);
+
+				log("Access token generated: " + access_token_str);
+
+				// generate a token instance with this access token
+				Token access_token = Token(access_token_str, user_id, global_token_lifetime, Token::ACCESS);
+
+				// add the approvals from the token to the access token
+				std::unordered_map<std::string, std::string> approvals = token.get_approvals();
+				access_token.add_approvals(approvals);
+
+				std::string refresh_token = "";
+				// if auto refresh is enabled then also generate a refresh token based on the access token
+				if (auto_refresh)
+				{
+					log("Auto refresh enabled. Generating a refresh token");
+
+					// Convert the access token to char*
+					char *access_token_c = strdup(access_token_str.c_str());
+					// generate the refresh token
+					refresh_token = generate_access_token(access_token_c);
+					// add the refresh token to the token
+					access_token.add_refresh_token(refresh_token);
+				}
+
+				// Add the access token to the user to access token map
+				log("Adding access token for user " + user_id + " to the user to access token map");
+				user_to_access_token[user_id] = access_token_str;
+
+				// return the access token
+				result.access_token = strdup(access_token_str.c_str());
+				result.refresh_token = strdup(refresh_token.c_str());
+				result.expiration = global_token_lifetime;
+
+				return &result;
+			}
+			else
+			{
+				// if the token is not signed return an REQUEST_DENIED error
+				log("Token found but not signed. Returning REQUEST_DENIED");
+				result.access_token = strdup(ResponseCodes::getString(ResponseCodes::REQUEST_DENIED).c_str());
+				result.refresh_token = strdup(ResponseCodes::getString(ResponseCodes::REQUEST_DENIED).c_str());
+				result.expiration = -1;
+				return &result;
+			}
+		}
+	}
+
+	// if the token is not found return an REQUEST_DENIED error
+	log("Token not found. Returning REQUEST_DENIED");
+	result.access_token = strdup(ResponseCodes::getString(ResponseCodes::REQUEST_DENIED).c_str());
+	result.refresh_token = strdup(ResponseCodes::getString(ResponseCodes::REQUEST_DENIED).c_str());
+	result.expiration = -1;
 
 	return &result;
 }
@@ -63,13 +135,86 @@ validate_delegated_action_1_svc(delegated_action_request_t *argp, struct svc_req
 }
 
 char **
-approve_request_token_1_svc(char **argp, struct svc_req *rqstp)
+approve_request_token_1_svc(request_authorization_t *argp, struct svc_req *rqstp)
 {
 	static char *result;
 
-	/*
-	 * insert server code here
-	 */
+	std::string token_received = argp->authentification_token;
+	std::string user_id_str = argp->user_id;
+	int refresh_token = argp->refresh_token;
+
+	log("========= APPROVE REQUEST TOKEN =========");
+	log("Request signature for token: " + token_received + " for user " + user_id_str + " with refresh token " + std::to_string(refresh_token));
+
+	// if we find the token in the list
+	for (Token token : auth_token_list)
+	{
+		if (token.get_token() == token_received)
+		{
+			// if the token is signed
+			if (token.get_status() == Token::AUTH_SIGNED)
+			{
+				log("Token already signed. Returning the token");
+				// return the token
+				strcpy(result, token.get_token().c_str());
+				return &result;
+			}
+			else
+			{
+				log("Found token as not signed. Signing the token");
+				// based on the approvals the user has in user_to_approvals_list, add them to the token
+				// make user_id from argp string
+				std::unordered_map<std::string, std::string> approvals = user_to_approvals_list[user_id_str];
+
+				// if there are no approvals return token as unsigned
+				if (approvals.empty())
+				{
+					log("No approvals found for user " + user_id_str);
+					strcpy(result, argp->authentification_token);
+					return &result;
+				}
+
+				log("Adding approvals to token for user " + user_id_str);
+				token.add_approvals(approvals);
+
+				// if the token is unsigned, sign it
+				log("Signing the token and returning it");
+				token.sign();
+
+				// return the token
+				strcpy(result, token.get_token().c_str());
+				return &result;
+			}
+		}
+	}
+
+	// return the token unchanged if no approvals are to be added
+	log("Token not found. Adding it to the list");
+	Token token = Token(argp->authentification_token, user_id_str, global_token_lifetime, Token::AUTH_UNSIGNED);
+
+	// based on the approvals the user has in user_to_approvals_list, add them to the token
+	std::unordered_map<std::string, std::string> approvals = user_to_approvals_list[user_id_str];
+
+	// if there are no approvals return token as unsigned
+	if (approvals.empty())
+	{
+		log("No approvals found for user " + user_id_str);
+		strcpy(result, token_received.c_str());
+		return &result;
+	}
+
+	log("Adding approvals to token for user " + user_id_str);
+	token.add_approvals(approvals);
+
+	// if the token is unsigned, sign it
+	log("Signing the token and returning it");
+	token.sign();
+
+	// add the token to the list
+	auth_token_list.push_back(token);
+
+	std::string result_str = token.get_token();
+	result = strdup(result_str.c_str());
 
 	return &result;
 }

@@ -1,5 +1,6 @@
 #include "../operations_parser/operations_parser.hpp"
 #include "../operations/operation.hpp"
+#include "../../data/client_model/client_model.hpp"
 #include "oauth.h"
 
 #define LOCALHOST "127.0.0.1"
@@ -16,4 +17,5 @@ public:
 
 private:
     std::vector<Operation *> operations;
+    ClientModel client_model;
 };

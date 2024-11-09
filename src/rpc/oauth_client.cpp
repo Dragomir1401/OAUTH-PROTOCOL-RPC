@@ -19,7 +19,7 @@ void oauth_protocol_1(char *host)
 	char **result_3;
 	delegated_action_request_t validate_delegated_action_1_arg;
 	char **result_4;
-	char *approve_request_token_1_arg;
+	request_authorization_t approve_request_token_1_arg;
 	access_token_t *result_5;
 	access_token_t refresh_access_1_arg;
 

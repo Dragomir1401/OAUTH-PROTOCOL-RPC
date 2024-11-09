@@ -26,7 +26,7 @@ oauth_protocol_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		char *request_authorization_1_arg;
 		access_token_request_t request_access_token_1_arg;
 		delegated_action_request_t validate_delegated_action_1_arg;
-		char *approve_request_token_1_arg;
+		request_authorization_t approve_request_token_1_arg;
 		access_token_t refresh_access_1_arg;
 	} argument;
 	char *result;
@@ -58,7 +58,7 @@ oauth_protocol_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		break;
 
 	case approve_request_token:
-		_xdr_argument = (xdrproc_t)xdr_wrapstring;
+		_xdr_argument = (xdrproc_t)xdr_request_authorization_t;
 		_xdr_result = (xdrproc_t)xdr_wrapstring;
 		local = (char *(*)(char *, struct svc_req *))approve_request_token_1_svc;
 		break;
@@ -138,7 +138,7 @@ void readResourcesFile(char *file)
 	}
 }
 
-void readApprovalsFile(char *file)
+void readApprovalsFile(char *file, std::vector<std::string> user_list)
 {
 	// open file with fopen
 	FILE *fp = fopen(file, "r");
@@ -185,8 +185,8 @@ void readApprovalsFile(char *file)
 			token = strtok(NULL, ",");
 		}
 
+		user_to_approvals_list[user_list[user_counter]] = user_approvals;
 		user_counter++;
-		user_to_approvals_list.push_back(user_approvals);
 	}
 }
 
@@ -215,17 +215,19 @@ int main(int argc, char **argv)
 		std::cout << resource << std::endl;
 	}
 
-	readApprovalsFile(argv[3]);
-	// print the approvals
-	int user_counter = 0;
-	for (std::unordered_map<std::string, std::string> user_approvals : user_to_approvals_list)
+	readApprovalsFile(argv[3], user_list);
+	// print the approvals for each user id
+	for (auto const &user_approvals : user_to_approvals_list)
 	{
-		std::cout << "User " << user_counter++ << std::endl;
-		for (auto const &x : user_approvals)
+		std::cout << user_approvals.first << std::endl;
+		for (auto const &approval : user_approvals.second)
 		{
-			std::cout << "Resource: " << x.first << " Permission: " << x.second << std::endl;
+			std::cout << approval.first << " " << approval.second << std::endl;
 		}
 	}
+
+	// Set global token lifetime
+	global_token_lifetime = atoi(argv[4]);
 
 	pmap_unset(OAUTH_PROTOCOL, OAUTH_VERSION);
 

@@ -58,13 +58,13 @@ validate_delegated_action_1(delegated_action_request_t *argp, CLIENT *clnt)
 }
 
 char **
-approve_request_token_1(char **argp, CLIENT *clnt)
+approve_request_token_1(request_authorization_t *argp, CLIENT *clnt)
 {
 	static char *clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
 	if (clnt_call(clnt, approve_request_token,
-				  (xdrproc_t)xdr_wrapstring, (caddr_t)argp,
+				  (xdrproc_t)xdr_request_authorization_t, (caddr_t)argp,
 				  (xdrproc_t)xdr_wrapstring, (caddr_t)&clnt_res,
 				  TIMEOUT) != RPC_SUCCESS)
 	{

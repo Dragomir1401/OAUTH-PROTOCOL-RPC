@@ -1,1 +1,1 @@
-./client localhost ../tst/tests/test1/client.in
+./client localhost ./testing/test1/client.in
