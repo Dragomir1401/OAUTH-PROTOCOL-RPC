@@ -13,7 +13,8 @@ public:
     ~OperationProcessor();
     void process_operations();
     access_token_request_t process_request(Operation *operation, CLIENT *client);
-    void log(std::string message);
+    void log(std::string message, int level);
+    int logError(char *error, int level);
     ClientModel get_client_model();
     void process_command(Operation *operation, CLIENT *client);
 

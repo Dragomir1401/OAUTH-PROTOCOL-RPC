@@ -1,6 +1,7 @@
 #include "operations_processor.hpp"
 #include "../../utils/res_codes.hpp"
 #include <iostream>
+#include <fstream>
 
 OperationProcessor::OperationProcessor()
 {
@@ -24,21 +25,21 @@ void OperationProcessor::process_command(Operation *operation, CLIENT *client)
 
     if (user_to_access_token.find(user_id) == user_to_access_token.end())
     {
-        log("User " + user_id + " does not have an access token");
+        log("User " + user_id + " does not have an access token", 1);
     }
     else
     {
-        log("User " + user_id + " has an access token");
+        log("User " + user_id + " has an access token", 1);
 
         // if the access token is expired
         if (user_to_access_token[user_id].expiration <= 0)
         {
-            log("Access token expired.");
+            log("Access token expired.", 1);
 
             // if auto refresh is enabled
             if (user_to_access_token[user_id].refresh_token != "")
             {
-                log("Auto refresh enabled. Refreshing token");
+                log("Auto refresh enabled. Refreshing token", 1);
 
                 // refresh the access token
                 access_token_t *result = refresh_access_1(&user_to_access_token[user_id], client);
@@ -48,19 +49,19 @@ void OperationProcessor::process_command(Operation *operation, CLIENT *client)
                     clnt_perror(client, "call failed");
                 }
 
-                log("Access token refreshed: " + std::string(result->access_token) + " with refresh token: " + std::string(result->refresh_token) + " and expiration: " + std::to_string(result->expiration));
+                log("Access token refreshed: " + std::string(result->access_token) + " with refresh token: " + std::string(result->refresh_token) + " and expiration: " + std::to_string(result->expiration), 1);
 
                 // update the access token in the client model
                 client_model.add_access_token(user_id, *result);
             }
             else
             {
-                log("Auto refresh not enabled. Not sending the request");
+                log("Auto refresh not enabled. Not sending the request", 1);
             }
         }
         else
         {
-            log("Access token not expired. Using it");
+            log("Access token not expired. Using it", 1);
 
             // convert the fields from the operation to char *
             char *operation_type = strdup(operation->get_action().c_str());
@@ -82,7 +83,7 @@ void OperationProcessor::process_command(Operation *operation, CLIENT *client)
                 clnt_perror(client, "call failed");
             }
 
-            log("Delegated action validation result: " + std::string(*result));
+            log("Delegated action validation result: " + std::string(*result), 1);
         }
     }
 }
@@ -101,7 +102,7 @@ void OperationProcessor::process_operations()
     for (Operation *operation : operations)
     {
         // log operation
-        log(operation->to_string());
+        log(operation->to_string(), 1);
 
         if (operation->is_request())
         {
@@ -115,10 +116,15 @@ void OperationProcessor::process_operations()
                 clnt_perror(client, "call failed");
             }
 
-            log("Access token received: " + std::string(result->access_token) + " with refresh token: " + std::string(result->refresh_token) + " and expiration: " + std::to_string(result->expiration));
+            log("Access token received: " + std::string(result->access_token) + " with refresh token: " + std::string(result->refresh_token) + " and expiration: " + std::to_string(result->expiration), 1);
 
-            // add the access token in the client model
-            client_model.add_access_token(access_token_request.user_id, *result);
+            // if request is denied print it
+            if (logError(result->access_token, 0) == -1)
+            {
+                log(std::string(access_token_request.authentification_token) + " -> " + std::string(result->access_token), 0);
+                // add the access token in the client model
+                client_model.add_access_token(access_token_request.user_id, *result);
+            }
         }
         else if (operation->is_modify() || operation->is_read() || operation->is_delete() || operation->is_insert())
         {
@@ -128,11 +134,11 @@ void OperationProcessor::process_operations()
 
             if (user_to_access_token.find(user_id) == user_to_access_token.end())
             {
-                log("User " + user_id + " does not have an access token");
+                log("User " + user_id + " does not have an access token", 1);
             }
             else
             {
-                log("User " + user_id + " has an access token");
+                log("User " + user_id + " has an access token", 1);
                 process_command(operation, client);
             }
         }
@@ -158,11 +164,11 @@ access_token_request_t OperationProcessor::process_request(Operation *operation,
 
     if (strcmp(*result_auth, ResponseCodes::getString(ResponseCodes::USER_NOT_FOUND).c_str()) == 0)
     {
-        log("User not found");
+        log("User not found", 1);
     }
     else
     {
-        log("User with id " + operation->get_user_id() + " found with authentification token: " + std::string(*result_auth));
+        log("User with id " + operation->get_user_id() + " found with authentification token: " + std::string(*result_auth), 1);
     }
 
     request_authorization_t request_authorization_v;
@@ -170,7 +176,7 @@ access_token_request_t OperationProcessor::process_request(Operation *operation,
     request_authorization_v.authentification_token = *result_auth;
     request_authorization_v.refresh_token = operation->is_auto_refresh();
 
-    log("Request signature for token: " + std::string(request_authorization_v.authentification_token) + " for user " + request_authorization_v.user_id);
+    log("Request signature for token: " + std::string(request_authorization_v.authentification_token) + " for user " + request_authorization_v.user_id, 1);
 
     // this call will attach the token with the approvals in the server
     char **result = approve_request_token_1(&request_authorization_v, client);
@@ -180,7 +186,7 @@ access_token_request_t OperationProcessor::process_request(Operation *operation,
         clnt_perror(client, "call failed");
     }
 
-    log("Approve request token result: " + std::string(*result));
+    log("Approve request token result: " + std::string(*result), 1);
 
     access_token_request_t access_token_request;
     access_token_request.user_id = user_id;
@@ -195,7 +201,57 @@ ClientModel OperationProcessor::get_client_model()
     return this->client_model;
 }
 
-void OperationProcessor::log(std::string message)
+void OperationProcessor::log(std::string message, int level)
 {
-    std::cout << message << std::endl;
+    if (level == 1)
+    {
+        std::ofstream log_file("client_global_logging_file.txt", std::ios_base::app);
+        log_file << message << std::endl;
+    }
+    else if (level == 2)
+    {
+        std::ofstream log_file("server_global_logging_file.txt", std::ios_base::app);
+        log_file << message << std::endl;
+    }
+    else
+    {
+        std::cout << message << std::endl;
+    }
+}
+
+int OperationProcessor::logError(char *error, int level)
+{
+    // if request is denied print it
+    if (strcmp(error, ResponseCodes::getString(ResponseCodes::REQUEST_DENIED).c_str()) == 0)
+    {
+        log("REQUEST_DENIED", 0);
+        return 0;
+    }
+    else if (strcmp(error, ResponseCodes::getString(ResponseCodes::USER_NOT_FOUND).c_str()) == 0)
+    {
+        log("USER_NOT_FOUND", 0);
+        return 0;
+    }
+    else if (strcmp(error, ResponseCodes::getString(ResponseCodes::PERMISSION_DENIED).c_str()) == 0)
+    {
+        log("PERMISSION_DENIED", 0);
+        return 0;
+    }
+    else if (strcmp(error, ResponseCodes::getString(ResponseCodes::PERMISSION_GRANTED).c_str()) == 0)
+    {
+        log("PERMISSION_GRANTED", 0);
+        return 0;
+    }
+    else if (strcmp(error, ResponseCodes::getString(ResponseCodes::RESOURCE_NOT_FOUND).c_str()) == 0)
+    {
+        log("RESOURCE_NOT_FOUND", 0);
+        return 0;
+    }
+    else if (strcmp(error, ResponseCodes::getString(ResponseCodes::OPERATION_NOT_PERMITTED).c_str()) == 0)
+    {
+        log("OPERATION_NOT_PERMITTED", 0);
+        return 0;
+    }
+
+    return -1;
 }

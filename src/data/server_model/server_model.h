@@ -6,6 +6,7 @@
 #include <vector>
 #include "oauth.h"
 #include <iostream>
+#include <fstream>
 
 class Token
 {
@@ -30,7 +31,7 @@ public:
     TOKEN_STATUS get_status();
     void add_refresh_token(std::string refresh_token);
     void sign();
-    void log(std::string message);
+    void log(std::string message, int level);
     void decrease_lifetime();
 
 private:
@@ -44,7 +45,7 @@ private:
 
 extern std::vector<std::string> user_list;
 extern std::vector<std::string> resource_list;
-extern std::unordered_map<std::string, std::unordered_map<std::string, std::string>> user_to_approvals_list;
+extern std::vector<std::unordered_map<std::string, std::string>> user_to_approvals_list;
 extern std::vector<Token> auth_token_list;
 extern std::unordered_map<std::string, Token> user_to_access_token;
 extern int global_token_lifetime;

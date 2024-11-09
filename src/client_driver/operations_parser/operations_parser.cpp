@@ -58,7 +58,20 @@ void OperationsParser::set_input_file(char *input_file)
     this->input_file = input_file;
 }
 
-void OperationsParser::log(std::string message)
+void OperationsParser::log(std::string message, int level)
 {
-    std::cout << message << std::endl;
+    if (level == 1)
+    {
+        std::ofstream log_file("client_global_logging_file.txt", std::ios_base::app);
+        log_file << message << std::endl;
+    }
+    else if (level == 2)
+    {
+        std::ofstream log_file("server_global_logging_file.txt", std::ios_base::app);
+        log_file << message << std::endl;
+    }
+    else
+    {
+        std::cout << message << std::endl;
+    }
 }

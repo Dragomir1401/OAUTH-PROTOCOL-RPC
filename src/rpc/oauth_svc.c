@@ -185,7 +185,7 @@ void readApprovalsFile(char *file, std::vector<std::string> user_list)
 			token = strtok(NULL, ",");
 		}
 
-		user_to_approvals_list[user_list[user_counter]] = user_approvals;
+		user_to_approvals_list.push_back(user_approvals);
 		user_counter++;
 	}
 }
@@ -202,29 +202,8 @@ int main(int argc, char **argv)
 	}
 
 	readUsersFile(argv[1]);
-	// print the users
-	for (std::string user : user_list)
-	{
-		std::cout << user << std::endl;
-	}
-
 	readResourcesFile(argv[2]);
-	// print the resources
-	for (std::string resource : resource_list)
-	{
-		std::cout << resource << std::endl;
-	}
-
 	readApprovalsFile(argv[3], user_list);
-	// print the approvals for each user id
-	for (auto const &user_approvals : user_to_approvals_list)
-	{
-		std::cout << user_approvals.first << std::endl;
-		for (auto const &approval : user_approvals.second)
-		{
-			std::cout << approval.first << " " << approval.second << std::endl;
-		}
-	}
 
 	// Set global token lifetime
 	global_token_lifetime = atoi(argv[4]);

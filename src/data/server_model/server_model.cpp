@@ -2,7 +2,7 @@
 
 std::vector<std::string> user_list;
 std::vector<std::string> resource_list;
-std::unordered_map<std::string, std::unordered_map<std::string, std::string>> user_to_approvals_list;
+std::vector<std::unordered_map<std::string, std::string>> user_to_approvals_list;
 std::vector<Token> auth_token_list;
 std::unordered_map<std::string, Token> user_to_access_token;
 int global_token_lifetime;
@@ -57,7 +57,7 @@ void Token::add_approvals(std::unordered_map<std::string, std::string> approvals
     for (auto const &approval : approvals)
     {
         this->approvals[approval.first] = approval.second;
-        log("Approval added: " + approval.first + " " + approval.second + " for token " + this->token);
+        log("Approval added: " + approval.first + " " + approval.second + " for token " + this->token, 2);
     }
 }
 
@@ -88,18 +88,29 @@ void Token::add_refresh_token(std::string refresh_token)
 
 void Token::sign()
 {
-    log("Token with id " + this->token + " will be signed");
+    log("Token with id " + this->token + " will be signed", 2);
 
     this->status = AUTH_SIGNED;
-    // add .sgn to the token
-    this->token += "+.sgn";
 
-    log("Token with id " + this->token + " has been signed");
+    log("Token with id " + this->token + " has been signed", 2);
 }
 
-void Token::log(std::string message)
+void Token::log(std::string message, int level)
 {
-    std::cout << message << std::endl;
+    if (level == 1)
+    {
+        std::ofstream log_file("client_global_logging_file.txt", std::ios_base::app);
+        log_file << message << std::endl;
+    }
+    else if (level == 2)
+    {
+        std::ofstream log_file("server_global_logging_file.txt", std::ios_base::app);
+        log_file << message << std::endl;
+    }
+    else
+    {
+        std::cout << message << std::endl;
+    }
 }
 
 void Token::decrease_lifetime()
