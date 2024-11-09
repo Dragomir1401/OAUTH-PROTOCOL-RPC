@@ -6,9 +6,9 @@
 # ./check.sh all -> ruleaza toate testele
 #
 # Completati/schimbati urmatoarele valori inainte de utilizare:
-SERVER_NAME=""
+SERVER_NAME="../src/server"
 SERVER_PARAMS="tests/test$1/userIDs.db tests/test$1/resources.db tests/test$1/approvals.db"
-CLIENT_NAME=""
+CLIENT_NAME="../src/client"
 CLIENT_PARAMS="tests/test$1/client.in"
 SERVER_ADDR="localhost"
 
@@ -37,9 +37,12 @@ esac
 
 numberPattern='^[0-9]+$'
 if [[ $1 =~ $numberPattern ]]; then
+    # echo the command we run
+    echo "$SERVER_NAME $SERVER_PARAMS $TOKEN_LIFETIME > server.out &" 
     ./$SERVER_NAME $SERVER_PARAMS $TOKEN_LIFETIME > server.out &
     SERVER_PID=$!
     sleep 1
+    echo "$CLIENT_NAME $SERVER_ADDR $CLIENT_PARAMS > client.out"
     ./$CLIENT_NAME $SERVER_ADDR $CLIENT_PARAMS > client.out
     kill $SERVER_PID
 

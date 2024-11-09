@@ -1,0 +1,99 @@
+User: X5B0TWjmeNtU3vd Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
+User with id X5B0TWjmeNtU3vd found with authentification token: v53teNBmWTXjUd0
+Request signature for token: v53teNBmWTXjUd0 for user X5B0TWjmeNtU3vd
+Approve request token result: v53teNBmWTXjUd0
+Access token received: 0Ud5mTtBWNvj3eX with refresh token:  and expiration: 0
+Adding access token for user: X5B0TWjmeNtU3vd
+User: X5B0TWjmeNtU3vd Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
+User with id X5B0TWjmeNtU3vd found with authentification token: dvBj3mU5WXTtN0e
+Request signature for token: dvBj3mU5WXTtN0e for user X5B0TWjmeNtU3vd
+Approve request token result: dvBj3mU5WXTtN0e
+Access token received: e0UBjdmTXWtv35N with refresh token:  and expiration: 0
+Updating access token for user: X5B0TWjmeNtU3vd
+User: QHmJh2xwErPDcmv Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
+User with id QHmJh2xwErPDcmv found with authentification token: mxvJQE2whHrcDPm
+Request signature for token: mxvJQE2whHrcDPm for user QHmJh2xwErPDcmv
+Approve request token result: mxvJQE2whHrcDPm
+Access token received: REQUEST_DENIED with refresh token: REQUEST_DENIED and expiration: -1
+User: 111111111111111 Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
+User not found
+Request signature for token: USER_NOT_FOUND for user 111111111111111
+Approve request token result: USER_NOT_FOUND
+Access token received: USER_NOT_FOUND with refresh token: USER_NOT_FOUND and expiration: -1
+User: f80N46i82fdx61d Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
+User with id f80N46i82fdx61d found with authentification token: 6fx4i628d0fdN18
+Request signature for token: 6fx4i628d0fdN18 for user f80N46i82fdx61d
+Approve request token result: 6fx4i628d0fdN18
+Access token received: 62i4x180d6Nff8d with refresh token:  and expiration: 0
+Adding access token for user: f80N46i82fdx61d
+User: X5B0TWjmeNtU3vd Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
+User with id X5B0TWjmeNtU3vd found with authentification token: v53teNBmWTXjUd0
+Request signature for token: v53teNBmWTXjUd0 for user X5B0TWjmeNtU3vd
+Approve request token result: v53teNBmWTXjUd0
+Access token received: 0Ud5mTtBWNvj3eX with refresh token:  and expiration: 0
+Adding access token for user: X5B0TWjmeNtU3vd
+User: X5B0TWjmeNtU3vd Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
+User with id X5B0TWjmeNtU3vd found with authentification token: dvBj3mU5WXTtN0e
+Request signature for token: dvBj3mU5WXTtN0e for user X5B0TWjmeNtU3vd
+Approve request token result: dvBj3mU5WXTtN0e
+Access token received: e0UBjdmTXWtv35N with refresh token:  and expiration: 0
+Updating access token for user: X5B0TWjmeNtU3vd
+User: QHmJh2xwErPDcmv Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
+User with id QHmJh2xwErPDcmv found with authentification token: mxvJQE2whHrcDPm
+Request signature for token: mxvJQE2whHrcDPm for user QHmJh2xwErPDcmv
+Approve request token result: mxvJQE2whHrcDPm
+Access token received: REQUEST_DENIED with refresh token: REQUEST_DENIED and expiration: -1
+User: 111111111111111 Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
+User not found
+Request signature for token: USER_NOT_FOUND for user 111111111111111
+Approve request token result: USER_NOT_FOUND
+Access token received: USER_NOT_FOUND with refresh token: USER_NOT_FOUND and expiration: -1
+User: f80N46i82fdx61d Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
+User with id f80N46i82fdx61d found with authentification token: 6fx4i628d0fdN18
+Request signature for token: 6fx4i628d0fdN18 for user f80N46i82fdx61d
+Approve request token result: 6fx4i628d0fdN18
+Access token received: 62i4x180d6Nff8d with refresh token:  and expiration: 0
+Adding access token for user: f80N46i82fdx61d
+User: X5B0TWjmeNtU3vd Action: READ Resource: UserData Auto Refresh: -1
+User X5B0TWjmeNtU3vd does not have an access token
+User: X5B0TWjmeNtU3vd Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
+User with id X5B0TWjmeNtU3vd found with authentification token: v53teNBmWTXjUd0
+Request signature for token: v53teNBmWTXjUd0 for user X5B0TWjmeNtU3vd
+Approve request token result: v53teNBmWTXjUd0
+Access token received: 0Ud5mTtBWNvj3eX with refresh token:  and expiration: 2
+Adding access token for user: X5B0TWjmeNtU3vd
+User: X5B0TWjmeNtU3vd Action: READ Resource: UserData Auto Refresh: -1
+User X5B0TWjmeNtU3vd has an access token
+User X5B0TWjmeNtU3vd has an access token
+Access token not expired. Using it
+Delegated action validation result: PERMISSION_DENIED
+User: X5B0TWjmeNtU3vd Action: DELETE Resource: Preferences Auto Refresh: -1
+User X5B0TWjmeNtU3vd has an access token
+User X5B0TWjmeNtU3vd has an access token
+Access token not expired. Using it
+Delegated action validation result: PERMISSION_DENIED
+User: X5B0TWjmeNtU3vd Action: EXECUTE Resource: UserData Auto Refresh: -1
+User: X5B0TWjmeNtU3vd Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
+User with id X5B0TWjmeNtU3vd found with authentification token: dvBj3mU5WXTtN0e
+Request signature for token: dvBj3mU5WXTtN0e for user X5B0TWjmeNtU3vd
+Approve request token result: dvBj3mU5WXTtN0e
+Access token received: e0UBjdmTXWtv35N with refresh token:  and expiration: 2
+Updating access token for user: X5B0TWjmeNtU3vd
+User: X5B0TWjmeNtU3vd Action: MODIFY Resource: SystemData Auto Refresh: -1
+User X5B0TWjmeNtU3vd has an access token
+User X5B0TWjmeNtU3vd has an access token
+Access token not expired. Using it
+Delegated action validation result: PERMISSION_DENIED
+User: X5B0TWjmeNtU3vd Action: EXECUTE Resource: Applications Auto Refresh: -1
+User: QHmJh2xwErPDcmv Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
+User with id QHmJh2xwErPDcmv found with authentification token: mxvJQE2whHrcDPm
+Request signature for token: mxvJQE2whHrcDPm for user QHmJh2xwErPDcmv
+Approve request token result: mxvJQE2whHrcDPm
+Access token received: REQUEST_DENIED with refresh token: REQUEST_DENIED and expiration: -1
+User: PYM3XptJ6asHaRp Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
+User with id PYM3XptJ6asHaRp found with authentification token: pPHXta6YpMas3RJ
+Request signature for token: pPHXta6YpMas3RJ for user PYM3XptJ6asHaRp
+Approve request token result: pPHXta6YpMas3RJ
+Access token received: p6tXHRYMsa3PaJp with refresh token:  and expiration: 2
+Adding access token for user: PYM3XptJ6asHaRp
+User: PYM3XptJ6asHaRp Action: EXECUTE Resource: Random Auto Refresh: -1
