@@ -182,116 +182,167 @@ access_token_t *request_access_token_1_svc(access_token_request_t *argp, struct 
 	return &result;
 }
 
-char **
-validate_delegated_action_1_svc(delegated_action_request_t *argp, struct svc_req *rqstp)
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+// Helper to log validation result at level 0, with optional handling for empty or expired tokens
+void log_validation_result(const std::string &status, const std::string &operation_type,
+						   const std::string &resource, const std::string &access_token_str, int validity, bool omit_token = false)
+{
+	std::string log_message = status + " (" + operation_type + "," + resource + ",";
+	log_message += omit_token ? "" : access_token_str;
+	log_message += "," + std::to_string(validity) + ")";
+	log(log_message, 0);
+}
+
+// Helper to check if the access token is empty
+bool is_empty_token(const std::string &access_token_str, const std::string &operation_type, const std::string &resource, char *&result)
+{
+	if (access_token_str.empty())
+	{
+		log("Access token is empty. Returning PERMISSION_DENIED", 2);
+		log_validation_result("DENY", operation_type, resource, access_token_str, 0);
+		result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_DENIED).c_str());
+		return true;
+	}
+	return false;
+}
+
+// Helper to find the token in user_to_access_token map
+bool find_access_token(const std::string &access_token_str, Token &access_token, std::string &user_id)
+{
+	for (const auto &user_access_token : user_to_access_token)
+	{
+		if (user_access_token.second.get_token() == access_token_str)
+		{
+			access_token = user_access_token.second;
+			user_id = user_access_token.first;
+			return true;
+		}
+	}
+	return false;
+}
+
+// Helper to check if the token is expired
+bool is_token_expired(Token &access_token, const std::string &operation_type, const std::string &resource,
+					  const std::string &access_token_str, char *&result)
+{
+	if (access_token.get_lifetime() <= 0)
+	{
+		log("Access token expired", 2);
+		log_validation_result("DENY", operation_type, resource, access_token_str, 0);
+		result = strdup(ResponseCodes::getString(ResponseCodes::TOKEN_EXPIRED).c_str());
+		return true;
+	}
+	return false;
+}
+
+// Helper to validate operation type
+bool is_valid_operation(const std::string &operation_type)
+{
+	return operation_type == REQUEST || operation_type == MODIFY || operation_type == INSERT ||
+		   operation_type == DELETE || operation_type == READ || operation_type == NO_RESOURCE ||
+		   operation_type == EXECUTE;
+}
+
+// Helper to check if the resource exists
+bool is_valid_resource(const std::string &resource)
+{
+	return std::find(resource_list.begin(), resource_list.end(), resource) != resource_list.end();
+}
+
+// Helper to check if the user has the required approval
+bool has_required_approval(const Token &access_token, const std::string &resource, const std::string &operation_type)
+{
+	const auto &approvals = access_token.get_approvals();
+	auto it = approvals.find(resource);
+	return it != approvals.end() && it->second.find(access_token.get_operation_to_code()[operation_type]) != std::string::npos;
+}
+
+char **validate_delegated_action_1_svc(delegated_action_request_t *argp, struct svc_req *rqstp)
 {
 	static char *result;
 
-	// parse the arguments
+	// Parse the arguments
 	std::string operation_type = argp->operation_type;
 	std::string resource = argp->resource;
 	std::string access_token_str = argp->access_token;
 
 	log("========= VALIDATE DELEGATED ACTION =========", 2);
-	log("Validating delegated action for user with access token " + access_token_str + " for operation " + operation_type + " on resource " + resource, 2);
+	log("Validating delegated action for user with access token " + access_token_str +
+			" for operation " + operation_type + " on resource " + resource,
+		2);
 
-	// if access_token_str is "" print a DENY (Operation,Resource,access_tokien,valability) and return a PERMISSION_DENIED error
-	if (access_token_str == "")
+	// Check if the access token is empty
+	if (access_token_str.empty())
 	{
 		log("Access token is empty. Returning PERMISSION_DENIED", 2);
-		log("DENY (" + operation_type + "," + resource + "," + access_token_str + ",0)", 0);
+		log_validation_result("DENY", operation_type, resource, access_token_str, 0, /*omit_token=*/true);
 		result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_DENIED).c_str());
 		return &result;
 	}
 
-	// check if the access token is in the user_to_access_token map
-	for (auto const &user_access_token : user_to_access_token)
+	// Find the access token
+	Token access_token;
+	std::string user_id;
+	if (!find_access_token(access_token_str, access_token, user_id))
 	{
-		Token user_access_token_i = user_access_token.second;
-		log("Comparing " + user_access_token_i.get_token() + " with " + access_token_str, 2);
-		if (user_access_token_i.get_token() == access_token_str)
-		{
-			// get the access token based on the user id
-			Token access_token = user_to_access_token[user_access_token.first];
-
-			// based on the token, find the token in the
-			log("Access token with id " + access_token_str + " with lifetime " + std::to_string(access_token.get_lifetime()) + " found for user " + user_access_token.first, 2);
-
-			// check if the token is expired
-			if (access_token.get_lifetime() <= 0)
-			{
-				log("Access token expired", 2);
-				// log to stream 0 DENY (Operaion,Resource,access_token,validity)
-				log("DENY (" + operation_type + "," + resource + "," + ",0)", 0);
-				result = strdup(ResponseCodes::getString(ResponseCodes::TOKEN_EXPIRED).c_str());
-				return &result;
-			}
-
-			// decrease the lifetime of the token
-			user_to_access_token[user_access_token.first].decrease_lifetime();
-			access_token.decrease_lifetime();
-
-			// if operation type is not in the macros then send an OPERATION_NOT_PERMITTED error
-			if (operation_type != REQUEST && operation_type != MODIFY && operation_type != INSERT && operation_type != DELETE && operation_type != READ && operation_type != NO_RESOURCE && operation_type != EXECUTE)
-			{
-				log("Operation type not found. Returning OPERATION_NOT_PERMITTED", 2);
-				log("DENY (" + operation_type + "," + resource + "," + access_token_str + "," + std::to_string(access_token.get_lifetime()) + ")", 0);
-				result = strdup(ResponseCodes::getString(ResponseCodes::OPERATION_NOT_PERMITTED).c_str());
-				return &result;
-			}
-
-			// check if the resource exists in the resource_list
-			if (std::find(resource_list.begin(), resource_list.end(), resource) == resource_list.end())
-			{
-				log("Resource not found", 2);
-				// log to stream 0 DENY (Operaion,Resource,access_token,validity)
-				log("DENY (" + operation_type + "," + resource + "," + access_token_str + "," + std::to_string(access_token.get_lifetime()) + ")", 0);
-				result = strdup(ResponseCodes::getString(ResponseCodes::RESOURCE_NOT_FOUND).c_str());
-				return &result;
-			}
-
-			// check if the user has the permission to perform the action
-			std::unordered_map<std::string, std::string> approvals = access_token.get_approvals();
-
-			// log if the approvals are empty
-			if (approvals.empty())
-			{
-				log("No approvals found for the user", 2);
-			}
-
-			// print the approvals
-			for (auto const &approval : approvals)
-			{
-				log("Approval: " + approval.first + " " + approval.second, 2);
-			}
-
-			log("Searching for operation type " + operation_type + " in the approvals", 2);
-
-			// if the resource appears in approvals and the operation type lets say "D" for delete appears in the approvals string of that resource
-			if (approvals.find(resource) != approvals.end() && approvals[resource].find(access_token.get_operation_to_code()[operation_type]) != std::string::npos)
-			{
-				log("User has the permission to perform the action", 2);
-				// log to stream 0 PERMIT (Operaion,Resource,access_token,validity)
-				log("PERMIT (" + operation_type + "," + resource + "," + access_token_str + "," + std::to_string(access_token.get_lifetime()) + ")", 0);
-				result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_GRANTED).c_str());
-				return &result;
-			}
-			else
-			{
-				log("User does not have the permission to perform the action", 2);
-				// log to stream 0 DENY (Operaion,Resource,access_token,validity)
-				log("DENY (" + operation_type + "," + resource + "," + access_token_str + "," + std::to_string(access_token.get_lifetime()) + ")", 0);
-				result = strdup(ResponseCodes::getString(ResponseCodes::OPERATION_NOT_PERMITTED).c_str());
-				return &result;
-			}
-		}
+		log("Access token not found", 2);
+		log_validation_result("DENY", operation_type, resource, "", 0, /*omit_token=*/true);
+		result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_DENIED).c_str());
+		return &result;
 	}
 
-	// if the access token is not found return an error
-	log("Access token not found", 2);
-	// log to stream 0 DENY (Operaion,Resource,access_token,validity)
-	log("DENY (" + operation_type + "," + resource + "," + access_token_str + ", 0)", 0);
-	result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_DENIED).c_str());
+	log("Access token with id " + access_token_str + " with lifetime " +
+			std::to_string(access_token.get_lifetime()) + " found for user " + user_id,
+		2);
+
+	// Check if the token is expired
+	if (access_token.get_lifetime() <= 0)
+	{
+		log("Access token expired", 2);
+		log_validation_result("DENY", operation_type, resource, "", 0, /*omit_token=*/true);
+		result = strdup(ResponseCodes::getString(ResponseCodes::TOKEN_EXPIRED).c_str());
+		return &result;
+	}
+
+	// Decrease the lifetime of the token
+	user_to_access_token[user_id].decrease_lifetime();
+	access_token.decrease_lifetime();
+
+	// Validate the operation type
+	if (!is_valid_operation(operation_type))
+	{
+		log("Operation type not found. Returning OPERATION_NOT_PERMITTED", 2);
+		log_validation_result("DENY", operation_type, resource, access_token_str, access_token.get_lifetime());
+		result = strdup(ResponseCodes::getString(ResponseCodes::OPERATION_NOT_PERMITTED).c_str());
+		return &result;
+	}
+
+	// Validate the resource
+	if (!is_valid_resource(resource))
+	{
+		log("Resource not found", 2);
+		log_validation_result("DENY", operation_type, resource, access_token_str, access_token.get_lifetime());
+		result = strdup(ResponseCodes::getString(ResponseCodes::RESOURCE_NOT_FOUND).c_str());
+		return &result;
+	}
+
+	// Check if the user has the required approval
+	if (has_required_approval(access_token, resource, operation_type))
+	{
+		log("User has the permission to perform the action", 2);
+		log_validation_result("PERMIT", operation_type, resource, access_token_str, access_token.get_lifetime());
+		result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_GRANTED).c_str());
+	}
+	else
+	{
+		log("User does not have the permission to perform the action", 2);
+		log_validation_result("DENY", operation_type, resource, access_token_str, access_token.get_lifetime());
+		result = strdup(ResponseCodes::getString(ResponseCodes::OPERATION_NOT_PERMITTED).c_str());
+	}
+
 	return &result;
 }
 

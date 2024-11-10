@@ -45,7 +45,7 @@ Token::~Token()
 {
 }
 
-std::unordered_map<std::string, std::string> Token::get_approvals()
+std::unordered_map<std::string, std::string> Token::get_approvals() const
 {
     return this->approvals;
 }
@@ -75,7 +75,7 @@ std::string Token::get_user_id()
     return this->user_id;
 }
 
-int Token::get_lifetime()
+int Token::get_lifetime() const
 {
     return this->lifetime;
 }
@@ -122,7 +122,7 @@ void Token::decrease_lifetime()
     this->lifetime--;
 }
 
-std::unordered_map<std::string, std::string> Token::get_operation_to_code()
+std::unordered_map<std::string, std::string> Token::get_operation_to_code() const
 {
     return this->operation_to_code;
 }

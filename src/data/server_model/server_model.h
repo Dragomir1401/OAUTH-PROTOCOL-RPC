@@ -22,18 +22,18 @@ public:
     Token(std::string token, std::string refresh_token, std::string user_id, int lifetime, TOKEN_STATUS status);
     Token(std::unordered_map<std::string, std::string> approvals, std::string token, std::string user_id, int lifetime, TOKEN_STATUS status);
     ~Token();
-    std::unordered_map<std::string, std::string> get_approvals();
+    std::unordered_map<std::string, std::string> get_approvals() const;
     void add_approval(std::string resource, std::string permission);
     void add_approvals(std::unordered_map<std::string, std::string> approvals);
     std::string get_token() const;
     std::string get_user_id();
-    int get_lifetime();
+    int get_lifetime() const;
     TOKEN_STATUS get_status();
     void add_refresh_token(std::string refresh_token);
     void sign();
     void log(std::string message, int level);
     void decrease_lifetime();
-    std::unordered_map<std::string, std::string> get_operation_to_code();
+    std::unordered_map<std::string, std::string> get_operation_to_code() const;
     void copy_all_approvals(Token token);
 
 private:
