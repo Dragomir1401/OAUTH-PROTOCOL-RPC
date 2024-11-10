@@ -104,7 +104,7 @@ request_access_token_1_svc(access_token_request_t *argp, struct svc_req *rqstp)
 				std::unordered_map<std::string, std::string> approvals = token.get_approvals();
 				access_token.add_approvals(approvals);
 
-				std::string refresh_token = "";
+				std::string refresh_token = "NULL";
 				// if auto refresh is enabled then also generate a refresh token based on the access token
 				if (auto_refresh)
 				{
@@ -145,6 +145,12 @@ request_access_token_1_svc(access_token_request_t *argp, struct svc_req *rqstp)
 				result.expiration = global_token_lifetime;
 
 				log("  AccessToken = " + access_token_str, 0);
+
+				// if refresh is active also log the refresh token
+				if (auto_refresh)
+				{
+					log("  RefreshToken = " + refresh_token, 0);
+				}
 
 				return &result;
 			}
@@ -195,6 +201,7 @@ validate_delegated_action_1_svc(delegated_action_request_t *argp, struct svc_req
 	for (auto const &user_access_token : user_to_access_token)
 	{
 		Token user_access_token_i = user_access_token.second;
+		log("Comparing " + user_access_token_i.get_token() + " with " + access_token_str, 2);
 		if (user_access_token_i.get_token() == access_token_str)
 		{
 			// get the access token based on the user id
@@ -261,14 +268,6 @@ validate_delegated_action_1_svc(delegated_action_request_t *argp, struct svc_req
 				result = strdup(ResponseCodes::getString(ResponseCodes::OPERATION_NOT_PERMITTED).c_str());
 				return &result;
 			}
-		}
-		else
-		{
-			log("Access token not found", 2);
-			// log to stream 0 DENY (Operaion,Resource,access_token,validity)
-			log("DENY (" + operation_type + "," + resource + "," + access_token_str + ", 0)", 0);
-			result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_DENIED).c_str());
-			return &result;
 		}
 	}
 
@@ -370,6 +369,20 @@ approve_request_token_1_svc(request_authorization_t *argp, struct svc_req *rqstp
 access_token_t *
 refresh_access_1_svc(access_token_t *argp, struct svc_req *rqstp)
 {
+	// find the user id based on the access token
+	std::string user_id;
+	for (auto const &user_access_token : user_to_access_token)
+	{
+		Token user_access_token_i = user_access_token.second;
+		if (user_access_token_i.get_token() == argp->access_token)
+		{
+			user_id = user_access_token.first;
+			break;
+		}
+	}
+
+	// log in stream 0 BEGIN user_id AUTHZ REFRESH
+	log("BEGIN " + user_id + " AUTHZ REFRESH", 0);
 	static access_token_t result;
 
 	// parse the arguments
@@ -395,6 +408,7 @@ refresh_access_1_svc(access_token_t *argp, struct svc_req *rqstp)
 
 			// generate a new access token instance
 			Token new_access_token_i = Token(new_access_token, new_refresh_token, user_access_token_i.get_user_id(), global_token_lifetime, Token::ACCESS);
+			new_access_token_i.copy_all_approvals(user_access_token_i);
 
 			// update the access token in the user_to_access_token map
 			user_to_access_token[user_access_token.first] = new_access_token_i;
@@ -403,6 +417,9 @@ refresh_access_1_svc(access_token_t *argp, struct svc_req *rqstp)
 			result.access_token = strdup(new_access_token.c_str());
 			result.refresh_token = strdup(new_refresh_token.c_str());
 			result.expiration = global_token_lifetime;
+
+			log("  AccessToken = " + new_access_token, 0);
+			log("  RefreshToken = " + new_refresh_token, 0);
 
 			return &result;
 		}

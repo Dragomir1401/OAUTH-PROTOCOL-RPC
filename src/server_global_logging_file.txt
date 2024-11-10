@@ -1,115 +1,182 @@
 
-========= VALIDATE DELEGATED ACTION =========
-Validating delegated action for user with access token  for operation READ on resource UserData
-Access token is empty. Returning PERMISSION_DENIED
 ========= REQUEST AUTHORIZATION =========
 User found
-Token generated: v53teNBmWTXjUd0
+Token generated: e49HDdxTqL7dZya
 ========= APPROVE REQUEST TOKEN =========
-Request signature for token: v53teNBmWTXjUd0 for user X5B0TWjmeNtU3vd with refresh token 0
+Request signature for token: e49HDdxTqL7dZya for user 74xaLqdTDdHZ9ey with refresh token 0
 Token not found. Adding it to the list
-Adding approvals to token for user X5B0TWjmeNtU3vd
-Approval added: Preferences R for token v53teNBmWTXjUd0
-Approval added: UserData R for token v53teNBmWTXjUd0
+Adding approvals to token for user 74xaLqdTDdHZ9ey
+Approval added: Preferences R for token e49HDdxTqL7dZya
+Approval added: UserData R for token e49HDdxTqL7dZya
 Signing the token and returning it
-Token with id v53teNBmWTXjUd0 will be signed
-Token with id v53teNBmWTXjUd0 has been signed
+Token with id e49HDdxTqL7dZya will be signed
+Token with id e49HDdxTqL7dZya has been signed
 ========= REQUEST ACCESS TOKEN =========
-Request access token for user X5B0TWjmeNtU3vd with auth token v53teNBmWTXjUd0 and auto refresh 0
+Request access token for user 74xaLqdTDdHZ9ey with auth token e49HDdxTqL7dZya and auto refresh 0
 Token found and signed. Generating an access token
-Access token generated: 0Ud5mTtBWNvj3eX
-Approval added: UserData R for token 0Ud5mTtBWNvj3eX
-Approval added: Preferences R for token 0Ud5mTtBWNvj3eX
-Adding access token 0Ud5mTtBWNvj3eX to the user X5B0TWjmeNtU3vd in the user_to_access_token map
+Access token generated: aZy4TLHxqded9D7
+Approval added: UserData R for token aZy4TLHxqded9D7
+Approval added: Preferences R for token aZy4TLHxqded9D7
+Adding access token aZy4TLHxqded9D7 to the user 74xaLqdTDdHZ9ey in the user_to_access_token map
 Approval for this access token: Preferences R
 Approval for this access token: UserData R
-========= VALIDATE DELEGATED ACTION =========
-Validating delegated action for user with access token 0Ud5mTtBWNvj3eX for operation READ on resource UserData
-Access token with id 0Ud5mTtBWNvj3eX with lifetime 2 found for user X5B0TWjmeNtU3vd
-Approval: Preferences R
-Approval: UserData R
-Searching for operation type READ in the approvals
-User has the permission to perform the action
-========= VALIDATE DELEGATED ACTION =========
-Validating delegated action for user with access token 0Ud5mTtBWNvj3eX for operation DELETE on resource Preferences
-Access token with id 0Ud5mTtBWNvj3eX with lifetime 1 found for user X5B0TWjmeNtU3vd
-Approval: Preferences R
-Approval: UserData R
-Searching for operation type DELETE in the approvals
-User does not have the permission to perform the action
-========= VALIDATE DELEGATED ACTION =========
-Validating delegated action for user with access token 0Ud5mTtBWNvj3eX for operation EXECUTE on resource UserData
-Access token with id 0Ud5mTtBWNvj3eX with lifetime 0 found for user X5B0TWjmeNtU3vd
-Access token expired
 ========= REQUEST AUTHORIZATION =========
 User found
-Token generated: dvBj3mU5WXTtN0e
+Token generated: d10i68x86f4dfN2
 ========= APPROVE REQUEST TOKEN =========
-Request signature for token: dvBj3mU5WXTtN0e for user X5B0TWjmeNtU3vd with refresh token 0
+Request signature for token: d10i68x86f4dfN2 for user f80N46i82fdx61d with refresh token 1
 Token not found. Adding it to the list
-Adding approvals to token for user X5B0TWjmeNtU3vd
-Approval added: Applications RX for token dvBj3mU5WXTtN0e
-Approval added: Files RIMD for token dvBj3mU5WXTtN0e
-Approval added: UserData RM for token dvBj3mU5WXTtN0e
+Adding approvals to token for user f80N46i82fdx61d
+Approval added: Applications RX for token d10i68x86f4dfN2
+Approval added: Files RIMD for token d10i68x86f4dfN2
+Approval added: UserData RM for token d10i68x86f4dfN2
 Signing the token and returning it
-Token with id dvBj3mU5WXTtN0e will be signed
-Token with id dvBj3mU5WXTtN0e has been signed
+Token with id d10i68x86f4dfN2 will be signed
+Token with id d10i68x86f4dfN2 has been signed
 ========= REQUEST ACCESS TOKEN =========
-Request access token for user X5B0TWjmeNtU3vd with auth token dvBj3mU5WXTtN0e and auto refresh 0
+Request access token for user f80N46i82fdx61d with auth token d10i68x86f4dfN2 and auto refresh 1
 Token found and signed. Generating an access token
-Access token generated: e0UBjdmTXWtv35N
-Approval added: UserData RM for token e0UBjdmTXWtv35N
-Approval added: Files RIMD for token e0UBjdmTXWtv35N
-Approval added: Applications RX for token e0UBjdmTXWtv35N
-Adding access token e0UBjdmTXWtv35N to the user X5B0TWjmeNtU3vd in the user_to_access_token map
+Access token generated: 2Nx0id84f6d168f
+Approval added: UserData RM for token 2Nx0id84f6d168f
+Approval added: Files RIMD for token 2Nx0id84f6d168f
+Approval added: Applications RX for token 2Nx0id84f6d168f
+Auto refresh enabled. Generating a refresh token
+Adding access token 2Nx0id84f6d168f to the user f80N46i82fdx61d in the user_to_access_token map
 Approval for this access token: Applications RX
 Approval for this access token: Files RIMD
 Approval for this access token: UserData RM
 ========= VALIDATE DELEGATED ACTION =========
-Validating delegated action for user with access token e0UBjdmTXWtv35N for operation MODIFY on resource SystemData
-Access token with id e0UBjdmTXWtv35N with lifetime 2 found for user X5B0TWjmeNtU3vd
+Validating delegated action for user with access token 2Nx0id84f6d168f for operation READ on resource Applications
+Comparing 2Nx0id84f6d168f with 2Nx0id84f6d168f
+Access token with id 2Nx0id84f6d168f with lifetime 2 found for user f80N46i82fdx61d
 Approval: Applications RX
 Approval: Files RIMD
 Approval: UserData RM
-Searching for operation type MODIFY in the approvals
-User does not have the permission to perform the action
+Searching for operation type READ in the approvals
+User has the permission to perform the action
 ========= VALIDATE DELEGATED ACTION =========
-Validating delegated action for user with access token e0UBjdmTXWtv35N for operation EXECUTE on resource Applications
-Access token with id e0UBjdmTXWtv35N with lifetime 1 found for user X5B0TWjmeNtU3vd
+Validating delegated action for user with access token 2Nx0id84f6d168f for operation EXECUTE on resource Applications
+Comparing 2Nx0id84f6d168f with 2Nx0id84f6d168f
+Access token with id 2Nx0id84f6d168f with lifetime 1 found for user f80N46i82fdx61d
 Approval: Applications RX
 Approval: Files RIMD
 Approval: UserData RM
 Searching for operation type EXECUTE in the approvals
 User has the permission to perform the action
+========= REFRESH ACCESS TOKEN =========
+Refresh access token with access token 2Nx0id84f6d168f and refresh token x8f02fd4iN661d8
+Access token found. Refreshing it
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token fx62d1i88fN60d4 for operation DELETE on resource Applications
+Comparing fx62d1i88fN60d4 with fx62d1i88fN60d4
+Access token with id fx62d1i88fN60d4 with lifetime 2 found for user f80N46i82fdx61d
+Approval: UserData RM
+Approval: Files RIMD
+Approval: Applications RX
+Searching for operation type DELETE in the approvals
+User does not have the permission to perform the action
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token aZy4TLHxqded9D7 for operation READ on resource Preferences
+Comparing fx62d1i88fN60d4 with aZy4TLHxqded9D7
+Comparing aZy4TLHxqded9D7 with aZy4TLHxqded9D7
+Access token with id aZy4TLHxqded9D7 with lifetime 2 found for user 74xaLqdTDdHZ9ey
+Approval: Preferences R
+Approval: UserData R
+Searching for operation type READ in the approvals
+User has the permission to perform the action
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token aZy4TLHxqded9D7 for operation MODIFY on resource Preferences
+Comparing fx62d1i88fN60d4 with aZy4TLHxqded9D7
+Comparing aZy4TLHxqded9D7 with aZy4TLHxqded9D7
+Access token with id aZy4TLHxqded9D7 with lifetime 1 found for user 74xaLqdTDdHZ9ey
+Approval: Preferences R
+Approval: UserData R
+Searching for operation type MODIFY in the approvals
+User does not have the permission to perform the action
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token aZy4TLHxqded9D7 for operation MODIFY on resource UserData
+Comparing fx62d1i88fN60d4 with aZy4TLHxqded9D7
+Comparing aZy4TLHxqded9D7 with aZy4TLHxqded9D7
+Access token with id aZy4TLHxqded9D7 with lifetime 0 found for user 74xaLqdTDdHZ9ey
+Access token expired
 ========= REQUEST AUTHORIZATION =========
 User found
-Token generated: mxvJQE2whHrcDPm
+Token generated: Dqdyd49HLaZ7Tex
 ========= APPROVE REQUEST TOKEN =========
-Request signature for token: mxvJQE2whHrcDPm for user QHmJh2xwErPDcmv with refresh token 0
+Request signature for token: Dqdyd49HLaZ7Tex for user 74xaLqdTDdHZ9ey with refresh token 0
 Token not found. Adding it to the list
-No approvals found for user QHmJh2xwErPDcmv
+No approvals found for user 74xaLqdTDdHZ9ey
 ========= REQUEST ACCESS TOKEN =========
-Request access token for user QHmJh2xwErPDcmv with auth token mxvJQE2whHrcDPm and auto refresh 0
+Request access token for user 74xaLqdTDdHZ9ey with auth token Dqdyd49HLaZ7Tex and auto refresh 0
 Token not found. Returning REQUEST_DENIED
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token fx62d1i88fN60d4 for operation INSERT on resource Files
+Comparing fx62d1i88fN60d4 with fx62d1i88fN60d4
+Access token with id fx62d1i88fN60d4 with lifetime 1 found for user f80N46i82fdx61d
+Approval: UserData RM
+Approval: Files RIMD
+Approval: Applications RX
+Searching for operation type INSERT in the approvals
+User has the permission to perform the action
+========= REFRESH ACCESS TOKEN =========
+Refresh access token with access token fx62d1i88fN60d4 and refresh token fid26d8f610xN48
+Access token found. Refreshing it
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token 8042d6f8fiN1d6x for operation INSERT on resource Applications
+Comparing 8042d6f8fiN1d6x with 8042d6f8fiN1d6x
+Access token with id 8042d6f8fiN1d6x with lifetime 2 found for user f80N46i82fdx61d
+Approval: Applications RX
+Approval: Files RIMD
+Approval: UserData RM
+Searching for operation type INSERT in the approvals
+User does not have the permission to perform the action
 ========= REQUEST AUTHORIZATION =========
 User found
-Token generated: pPHXta6YpMas3RJ
+Token generated: 808fd664dxN1if2
 ========= APPROVE REQUEST TOKEN =========
-Request signature for token: pPHXta6YpMas3RJ for user PYM3XptJ6asHaRp with refresh token 0
+Request signature for token: 808fd664dxN1if2 for user f80N46i82fdx61d with refresh token 1
 Token not found. Adding it to the list
-Adding approvals to token for user PYM3XptJ6asHaRp
-Approval added: Applications RIMD for token pPHXta6YpMas3RJ
+Adding approvals to token for user f80N46i82fdx61d
+Approval added: Applications RIMD for token 808fd664dxN1if2
 Signing the token and returning it
-Token with id pPHXta6YpMas3RJ will be signed
-Token with id pPHXta6YpMas3RJ has been signed
+Token with id 808fd664dxN1if2 will be signed
+Token with id 808fd664dxN1if2 has been signed
 ========= REQUEST ACCESS TOKEN =========
-Request access token for user PYM3XptJ6asHaRp with auth token pPHXta6YpMas3RJ and auto refresh 0
+Request access token for user f80N46i82fdx61d with auth token 808fd664dxN1if2 and auto refresh 1
 Token found and signed. Generating an access token
-Access token generated: p6tXHRYMsa3PaJp
-Approval added: Applications RIMD for token p6tXHRYMsa3PaJp
-Adding access token p6tXHRYMsa3PaJp to the user PYM3XptJ6asHaRp in the user_to_access_token map
+Access token generated: d8xf4fid6860N21
+Approval added: Applications RIMD for token d8xf4fid6860N21
+Auto refresh enabled. Generating a refresh token
+Adding access token d8xf4fid6860N21 to the user f80N46i82fdx61d in the user_to_access_token map
 Approval for this access token: Applications RIMD
 ========= VALIDATE DELEGATED ACTION =========
-Validating delegated action for user with access token p6tXHRYMsa3PaJp for operation EXECUTE on resource Random
-Access token with id p6tXHRYMsa3PaJp with lifetime 2 found for user PYM3XptJ6asHaRp
-Resource not found
+Validating delegated action for user with access token d8xf4fid6860N21 for operation INSERT on resource Applications
+Comparing d8xf4fid6860N21 with d8xf4fid6860N21
+Access token with id d8xf4fid6860N21 with lifetime 2 found for user f80N46i82fdx61d
+Approval: Applications RIMD
+Searching for operation type INSERT in the approvals
+User has the permission to perform the action
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token d8xf4fid6860N21 for operation DELETE on resource Files
+Comparing d8xf4fid6860N21 with d8xf4fid6860N21
+Access token with id d8xf4fid6860N21 with lifetime 1 found for user f80N46i82fdx61d
+Approval: Applications RIMD
+Searching for operation type DELETE in the approvals
+User does not have the permission to perform the action
+========= REFRESH ACCESS TOKEN =========
+Refresh access token with access token d8xf4fid6860N21 and refresh token x40d8if866fdN12
+Access token found. Refreshing it
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token d6x80i241f6Ndf8 for operation EXECUTE on resource Applications
+Comparing d6x80i241f6Ndf8 with d6x80i241f6Ndf8
+Access token with id d6x80i241f6Ndf8 with lifetime 2 found for user f80N46i82fdx61d
+Approval: Applications RIMD
+Searching for operation type EXECUTE in the approvals
+User does not have the permission to perform the action
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token d6x80i241f6Ndf8 for operation DELETE on resource Applications
+Comparing d6x80i241f6Ndf8 with d6x80i241f6Ndf8
+Access token with id d6x80i241f6Ndf8 with lifetime 1 found for user f80N46i82fdx61d
+Approval: Applications RIMD
+Searching for operation type DELETE in the approvals
+User has the permission to perform the action

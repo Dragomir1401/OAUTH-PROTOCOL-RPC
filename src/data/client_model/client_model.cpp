@@ -58,3 +58,11 @@ void ClientModel::log(std::string message, int level)
         std::cout << message << std::endl;
     }
 }
+
+void ClientModel::decrease_lifetime(std::string user_id)
+{
+    if (this->user_to_access_token.find(user_id) != this->user_to_access_token.end())
+    {
+        this->user_to_access_token[user_id].expiration--;
+    }
+}

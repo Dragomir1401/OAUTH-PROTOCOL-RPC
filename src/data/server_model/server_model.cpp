@@ -127,6 +127,15 @@ std::unordered_map<std::string, std::string> Token::get_operation_to_code()
     return this->operation_to_code;
 }
 
+void Token::copy_all_approvals(Token token)
+{
+    // deep copy all the approvals from the token
+    for (auto const &approval : token.get_approvals())
+    {
+        this->approvals[approval.first] = approval.second;
+    }
+}
+
 void Token::initialize_operation_to_code()
 {
     operation_to_code["MODIFY"] = "M";

@@ -34,6 +34,7 @@ public:
     void log(std::string message, int level);
     void decrease_lifetime();
     std::unordered_map<std::string, std::string> get_operation_to_code();
+    void copy_all_approvals(Token token);
 
 private:
     void initialize_operation_to_code();
