@@ -6,6 +6,7 @@
 
 #include "oauth.h"
 #include "../../data/server_model/server_model.h"
+#include "../client_driver/operations/operation.hpp"
 #include "../utils/token.h"
 #include "../utils/res_codes.hpp"
 #include <iostream>
@@ -223,6 +224,15 @@ validate_delegated_action_1_svc(delegated_action_request_t *argp, struct svc_req
 			// decrease the lifetime of the token
 			user_to_access_token[user_access_token.first].decrease_lifetime();
 			access_token.decrease_lifetime();
+
+			// if operation type is not in the macros then send an OPERATION_NOT_PERMITTED error
+			if (operation_type != REQUEST && operation_type != MODIFY && operation_type != INSERT && operation_type != DELETE && operation_type != READ && operation_type != NO_RESOURCE && operation_type != EXECUTE)
+			{
+				log("Operation type not found. Returning OPERATION_NOT_PERMITTED", 2);
+				log("DENY (" + operation_type + "," + resource + "," + access_token_str + "," + std::to_string(access_token.get_lifetime()) + ")", 0);
+				result = strdup(ResponseCodes::getString(ResponseCodes::OPERATION_NOT_PERMITTED).c_str());
+				return &result;
+			}
 
 			// check if the resource exists in the resource_list
 			if (std::find(resource_list.begin(), resource_list.end(), resource) == resource_list.end())

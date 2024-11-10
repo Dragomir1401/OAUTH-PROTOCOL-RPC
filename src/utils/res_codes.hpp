@@ -15,7 +15,8 @@ public:
         OPERATION_NOT_PERMITTED
     };
 
-    static const std::string &getString(res_codes code);
+    static const std::string &
+    getString(res_codes code);
     static const bool compare(res_codes code, const std::string &str);
 
 private:

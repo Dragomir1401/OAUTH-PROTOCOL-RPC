@@ -34,15 +34,11 @@ std::vector<Operation *> OperationsParser::parse_operations()
             line = line.substr(line.find(',') + 1);
             auto_refresh = std::stoi(line);
         }
-        else if (action == MODIFY || action == INSERT || action == DELETE || action == READ || action == EXECUTE)
+        else
         {
             // rest of the line is the resource
             line = line.substr(line.find(',') + 1);
             resource = line;
-        }
-        else
-        {
-            std::cout << "Invalid action" << std::endl;
         }
 
         Operation *operation = new Operation(user_id, action, resource, auto_refresh);

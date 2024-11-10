@@ -141,7 +141,7 @@ void OperationProcessor::process_operations()
                 client_model.add_access_token(access_token_request.user_id, *result);
             }
         }
-        else if (operation->is_modify() || operation->is_read() || operation->is_delete() || operation->is_insert() || operation->is_execute())
+        else
         {
             // check if the user has the access token
             std::unordered_map<std::string, access_token_t> user_to_access_token = client_model.get_user_to_access_token();

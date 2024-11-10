@@ -3,76 +3,68 @@ User: 74xaLqdTDdHZ9ey Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
 User with id 74xaLqdTDdHZ9ey found with authentification token: e49HDdxTqL7dZya
 Request signature for token: e49HDdxTqL7dZya for user 74xaLqdTDdHZ9ey
 Approve request token result: e49HDdxTqL7dZya
-Access token received: aZy4TLHxqded9D7 with refresh token: NULL and expiration: 2
+Access token received: aZy4TLHxqded9D7 with refresh token: NULL and expiration: 3
 Adding access token for user: 74xaLqdTDdHZ9ey
 User: f80N46i82fdx61d Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 1
 User with id f80N46i82fdx61d found with authentification token: d10i68x86f4dfN2
 Request signature for token: d10i68x86f4dfN2 for user f80N46i82fdx61d
 Approve request token result: d10i68x86f4dfN2
-Access token received: 2Nx0id84f6d168f with refresh token: x8f02fd4iN661d8 and expiration: 2
+Access token received: 2Nx0id84f6d168f with refresh token: x8f02fd4iN661d8 and expiration: 3
 Adding access token for user: f80N46i82fdx61d
 User: f80N46i82fdx61d Action: READ Resource: Applications Auto Refresh: -1
-New lifetime of the token: 1
+New lifetime of the token: 2
 Delegated action validation result: PERMISSION_GRANTED
 User: f80N46i82fdx61d Action: EXECUTE Resource: Applications Auto Refresh: -1
-New lifetime of the token: 0
+New lifetime of the token: 1
 Delegated action validation result: PERMISSION_GRANTED
 User: f80N46i82fdx61d Action: DELETE Resource: Applications Auto Refresh: -1
+New lifetime of the token: 0
+Delegated action validation result: OPERATION_NOT_PERMITTED
+User: 74xaLqdTDdHZ9ey Action: READ Resource: Preferences Auto Refresh: -1
+New lifetime of the token: 2
+Delegated action validation result: PERMISSION_GRANTED
+User: 74xaLqdTDdHZ9ey Action: MODIFY Resource: Preferences Auto Refresh: -1
+New lifetime of the token: 1
+Delegated action validation result: OPERATION_NOT_PERMITTED
+User: 74xaLqdTDdHZ9ey Action: MODIFY Resource: UserData Auto Refresh: -1
+New lifetime of the token: 0
+Delegated action validation result: OPERATION_NOT_PERMITTED
+User: 74xaLqdTDdHZ9ey Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
+User with id 74xaLqdTDdHZ9ey found with authentification token: q7ZLd9D4yxdHaeT
+Request signature for token: q7ZLd9D4yxdHaeT for user 74xaLqdTDdHZ9ey
+Approve request token result: q7ZLd9D4yxdHaeT
+Access token received: REQUEST_DENIED with refresh token: REQUEST_DENIED and expiration: -1
+User: f80N46i82fdx61d Action: INSERT Resource: Files Auto Refresh: -1
 Access token expired.
 Comparing x8f02fd4iN661d8 with NULL
 Auto refresh enabled. Refreshing token
-Access token refreshed: fx62d1i88fN60d4 with refresh token: fid26d8f610xN48 and expiration: 2
+Access token refreshed: xd20fd4N6f1868i with refresh token: 6dfi4d61f08xN82 and expiration: 3
 Updating access token for user: f80N46i82fdx61d
-New lifetime of the token: 1
-Delegated action validation result: OPERATION_NOT_PERMITTED
-User: 74xaLqdTDdHZ9ey Action: READ Resource: Preferences Auto Refresh: -1
-New lifetime of the token: 1
-Delegated action validation result: PERMISSION_GRANTED
-User: 74xaLqdTDdHZ9ey Action: MODIFY Resource: Preferences Auto Refresh: -1
-New lifetime of the token: 0
-Delegated action validation result: OPERATION_NOT_PERMITTED
-User: 74xaLqdTDdHZ9ey Action: MODIFY Resource: UserData Auto Refresh: -1
-Access token expired.
-Comparing NULL with NULL
-Auto refresh not enabled. Not sending the request
-New lifetime of the token: -1
-Delegated action validation result: TOKEN_EXPIRED
-User: 74xaLqdTDdHZ9ey Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 0
-User with id 74xaLqdTDdHZ9ey found with authentification token: Dqdyd49HLaZ7Tex
-Request signature for token: Dqdyd49HLaZ7Tex for user 74xaLqdTDdHZ9ey
-Approve request token result: Dqdyd49HLaZ7Tex
-Access token received: REQUEST_DENIED with refresh token: REQUEST_DENIED and expiration: -1
-User: f80N46i82fdx61d Action: INSERT Resource: Files Auto Refresh: -1
-New lifetime of the token: 0
+New lifetime of the token: 2
 Delegated action validation result: PERMISSION_GRANTED
 User: f80N46i82fdx61d Action: INSERT Resource: Applications Auto Refresh: -1
-Access token expired.
-Comparing fid26d8f610xN48 with NULL
-Auto refresh enabled. Refreshing token
-Access token refreshed: 8042d6f8fiN1d6x with refresh token: 42d16x8difN6f08 and expiration: 2
-Updating access token for user: f80N46i82fdx61d
 New lifetime of the token: 1
 Delegated action validation result: OPERATION_NOT_PERMITTED
 User: f80N46i82fdx61d Action: REQUEST Resource: NO_RESOURCE Auto Refresh: 1
-User with id f80N46i82fdx61d found with authentification token: 808fd664dxN1if2
-Request signature for token: 808fd664dxN1if2 for user f80N46i82fdx61d
-Approve request token result: 808fd664dxN1if2
-Access token received: d8xf4fid6860N21 with refresh token: x40d8if866fdN12 and expiration: 2
+User with id f80N46i82fdx61d found with authentification token: dd1N028if86f64x
+Request signature for token: dd1N028if86f64x for user f80N46i82fdx61d
+Approve request token result: dd1N028if86f64x
+Access token received: 1N0f2xd68f648di with refresh token: 60Nf6x82i4fdd18 and expiration: 3
 Updating access token for user: f80N46i82fdx61d
 User: f80N46i82fdx61d Action: INSERT Resource: Applications Auto Refresh: -1
-New lifetime of the token: 1
+New lifetime of the token: 2
 Delegated action validation result: PERMISSION_GRANTED
 User: f80N46i82fdx61d Action: DELETE Resource: Files Auto Refresh: -1
-New lifetime of the token: 0
-Delegated action validation result: OPERATION_NOT_PERMITTED
-User: f80N46i82fdx61d Action: EXECUTE Resource: Applications Auto Refresh: -1
-Access token expired.
-Comparing x40d8if866fdN12 with NULL
-Auto refresh enabled. Refreshing token
-Access token refreshed: d6x80i241f6Ndf8 with refresh token: 8f6i61dN804fd2x and expiration: 2
-Updating access token for user: f80N46i82fdx61d
 New lifetime of the token: 1
 Delegated action validation result: OPERATION_NOT_PERMITTED
-User: f80N46i82fdx61d Action: DELETE Resource: Applications Auto Refresh: -1
+User: f80N46i82fdx61d Action: EXECUTE Resource: Applications Auto Refresh: -1
 New lifetime of the token: 0
-Delegated action validation result: PERMISSION_GRANTED
+Delegated action validation result: OPERATION_NOT_PERMITTED
+User: f80N46i82fdx61d Action: 11111 Resource: NO_RESOURCE Auto Refresh: -1
+Access token expired.
+Comparing 60Nf6x82i4fdd18 with NULL
+Auto refresh enabled. Refreshing token
+Access token refreshed: iN412fd686x0f8d with refresh token: 4206Ndf68x1ifd8 and expiration: 3
+Updating access token for user: f80N46i82fdx61d
+New lifetime of the token: 2
+Delegated action validation result: OPERATION_NOT_PERMITTED
