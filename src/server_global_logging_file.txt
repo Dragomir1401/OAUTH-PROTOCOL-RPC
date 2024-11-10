@@ -1,3 +1,7 @@
+
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token  for operation READ on resource UserData
+Access token is empty. Returning PERMISSION_DENIED
 ========= REQUEST AUTHORIZATION =========
 User found
 Token generated: v53teNBmWTXjUd0
@@ -5,9 +9,8 @@ Token generated: v53teNBmWTXjUd0
 Request signature for token: v53teNBmWTXjUd0 for user X5B0TWjmeNtU3vd with refresh token 0
 Token not found. Adding it to the list
 Adding approvals to token for user X5B0TWjmeNtU3vd
-Approval added: Files RIMD for token v53teNBmWTXjUd0
-Approval added: Applications RIMDX for token v53teNBmWTXjUd0
-Approval added: SystemData RIMD for token v53teNBmWTXjUd0
+Approval added: Preferences R for token v53teNBmWTXjUd0
+Approval added: UserData R for token v53teNBmWTXjUd0
 Signing the token and returning it
 Token with id v53teNBmWTXjUd0 will be signed
 Token with id v53teNBmWTXjUd0 has been signed
@@ -15,13 +18,29 @@ Token with id v53teNBmWTXjUd0 has been signed
 Request access token for user X5B0TWjmeNtU3vd with auth token v53teNBmWTXjUd0 and auto refresh 0
 Token found and signed. Generating an access token
 Access token generated: 0Ud5mTtBWNvj3eX
-Approval added: SystemData RIMD for token 0Ud5mTtBWNvj3eX
-Approval added: Applications RIMDX for token 0Ud5mTtBWNvj3eX
-Approval added: Files RIMD for token 0Ud5mTtBWNvj3eX
+Approval added: UserData R for token 0Ud5mTtBWNvj3eX
+Approval added: Preferences R for token 0Ud5mTtBWNvj3eX
 Adding access token 0Ud5mTtBWNvj3eX to the user X5B0TWjmeNtU3vd in the user_to_access_token map
-Approval for this access token: Files RIMD
-Approval for this access token: Applications RIMDX
-Approval for this access token: SystemData RIMD
+Approval for this access token: Preferences R
+Approval for this access token: UserData R
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token 0Ud5mTtBWNvj3eX for operation READ on resource UserData
+Access token with id 0Ud5mTtBWNvj3eX with lifetime 2 found for user X5B0TWjmeNtU3vd
+Approval: Preferences R
+Approval: UserData R
+Searching for operation type READ in the approvals
+User has the permission to perform the action
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token 0Ud5mTtBWNvj3eX for operation DELETE on resource Preferences
+Access token with id 0Ud5mTtBWNvj3eX with lifetime 1 found for user X5B0TWjmeNtU3vd
+Approval: Preferences R
+Approval: UserData R
+Searching for operation type DELETE in the approvals
+User does not have the permission to perform the action
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token 0Ud5mTtBWNvj3eX for operation EXECUTE on resource UserData
+Access token with id 0Ud5mTtBWNvj3eX with lifetime 0 found for user X5B0TWjmeNtU3vd
+Access token expired
 ========= REQUEST AUTHORIZATION =========
 User found
 Token generated: dvBj3mU5WXTtN0e
@@ -29,7 +48,9 @@ Token generated: dvBj3mU5WXTtN0e
 Request signature for token: dvBj3mU5WXTtN0e for user X5B0TWjmeNtU3vd with refresh token 0
 Token not found. Adding it to the list
 Adding approvals to token for user X5B0TWjmeNtU3vd
-Approval added: Applications RIMD for token dvBj3mU5WXTtN0e
+Approval added: Applications RX for token dvBj3mU5WXTtN0e
+Approval added: Files RIMD for token dvBj3mU5WXTtN0e
+Approval added: UserData RM for token dvBj3mU5WXTtN0e
 Signing the token and returning it
 Token with id dvBj3mU5WXTtN0e will be signed
 Token with id dvBj3mU5WXTtN0e has been signed
@@ -37,105 +58,29 @@ Token with id dvBj3mU5WXTtN0e has been signed
 Request access token for user X5B0TWjmeNtU3vd with auth token dvBj3mU5WXTtN0e and auto refresh 0
 Token found and signed. Generating an access token
 Access token generated: e0UBjdmTXWtv35N
-Approval added: Applications RIMD for token e0UBjdmTXWtv35N
+Approval added: UserData RM for token e0UBjdmTXWtv35N
+Approval added: Files RIMD for token e0UBjdmTXWtv35N
+Approval added: Applications RX for token e0UBjdmTXWtv35N
 Adding access token e0UBjdmTXWtv35N to the user X5B0TWjmeNtU3vd in the user_to_access_token map
-Approval for this access token: Applications RIMD
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: mxvJQE2whHrcDPm
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: mxvJQE2whHrcDPm for user QHmJh2xwErPDcmv with refresh token 0
-Token not found. Adding it to the list
-No approvals found for user QHmJh2xwErPDcmv
-========= REQUEST ACCESS TOKEN =========
-Request access token for user QHmJh2xwErPDcmv with auth token mxvJQE2whHrcDPm and auto refresh 0
-Token not found. Returning REQUEST_DENIED
-========= REQUEST AUTHORIZATION =========
-User not found
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: USER_NOT_FOUND for user 111111111111111 with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user 111111111111111
-Approval added: Applications RX for token USER_NOT_FOUND
-Approval added: Files RIMD for token USER_NOT_FOUND
-Approval added: UserData RM for token USER_NOT_FOUND
-Signing the token and returning it
-Token with id USER_NOT_FOUND will be signed
-Token with id USER_NOT_FOUND has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user 111111111111111 with auth token USER_NOT_FOUND and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: NUU_ON_S
-Approval added: UserData RM for token NUU_ON_S
-Approval added: Files RIMD for token NUU_ON_S
-Approval added: Applications RX for token NUU_ON_S
-Adding access token NUU_ON_S to the user 111111111111111 in the user_to_access_token map
 Approval for this access token: Applications RX
 Approval for this access token: Files RIMD
 Approval for this access token: UserData RM
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: fi4N018fx668dd2
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: fi4N018fx668dd2 for user f80N46i82fdx61d with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user f80N46i82fdx61d
-Approval added: Preferences R for token fi4N018fx668dd2
-Approval added: UserData R for token fi4N018fx668dd2
-Signing the token and returning it
-Token with id fi4N018fx668dd2 will be signed
-Token with id fi4N018fx668dd2 has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user f80N46i82fdx61d with auth token fi4N018fx668dd2 and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: x1628id60N8ffd4
-Approval added: UserData R for token x1628id60N8ffd4
-Approval added: Preferences R for token x1628id60N8ffd4
-Adding access token x1628id60N8ffd4 to the user f80N46i82fdx61d in the user_to_access_token map
-Approval for this access token: Preferences R
-Approval for this access token: UserData R
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: v53teNBmWTXjUd0
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: v53teNBmWTXjUd0 for user X5B0TWjmeNtU3vd with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user X5B0TWjmeNtU3vd
-Approval added: Files RIMD for token v53teNBmWTXjUd0
-Approval added: Applications RIMDX for token v53teNBmWTXjUd0
-Approval added: SystemData RIMD for token v53teNBmWTXjUd0
-Signing the token and returning it
-Token with id v53teNBmWTXjUd0 will be signed
-Token with id v53teNBmWTXjUd0 has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user X5B0TWjmeNtU3vd with auth token v53teNBmWTXjUd0 and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: 0Ud5mTtBWNvj3eX
-Approval added: SystemData RIMD for token 0Ud5mTtBWNvj3eX
-Approval added: Applications RIMDX for token 0Ud5mTtBWNvj3eX
-Approval added: Files RIMD for token 0Ud5mTtBWNvj3eX
-Adding access token 0Ud5mTtBWNvj3eX to the user X5B0TWjmeNtU3vd in the user_to_access_token map
-Approval for this access token: Files RIMD
-Approval for this access token: Applications RIMDX
-Approval for this access token: SystemData RIMD
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: dvBj3mU5WXTtN0e
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: dvBj3mU5WXTtN0e for user X5B0TWjmeNtU3vd with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user X5B0TWjmeNtU3vd
-Approval added: Applications RIMD for token dvBj3mU5WXTtN0e
-Signing the token and returning it
-Token with id dvBj3mU5WXTtN0e will be signed
-Token with id dvBj3mU5WXTtN0e has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user X5B0TWjmeNtU3vd with auth token dvBj3mU5WXTtN0e and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: e0UBjdmTXWtv35N
-Approval added: Applications RIMD for token e0UBjdmTXWtv35N
-Adding access token e0UBjdmTXWtv35N to the user X5B0TWjmeNtU3vd in the user_to_access_token map
-Approval for this access token: Applications RIMD
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token e0UBjdmTXWtv35N for operation MODIFY on resource SystemData
+Access token with id e0UBjdmTXWtv35N with lifetime 2 found for user X5B0TWjmeNtU3vd
+Approval: Applications RX
+Approval: Files RIMD
+Approval: UserData RM
+Searching for operation type MODIFY in the approvals
+User does not have the permission to perform the action
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token e0UBjdmTXWtv35N for operation EXECUTE on resource Applications
+Access token with id e0UBjdmTXWtv35N with lifetime 1 found for user X5B0TWjmeNtU3vd
+Approval: Applications RX
+Approval: Files RIMD
+Approval: UserData RM
+Searching for operation type EXECUTE in the approvals
+User has the permission to perform the action
 ========= REQUEST AUTHORIZATION =========
 User found
 Token generated: mxvJQE2whHrcDPm
@@ -147,380 +92,24 @@ No approvals found for user QHmJh2xwErPDcmv
 Request access token for user QHmJh2xwErPDcmv with auth token mxvJQE2whHrcDPm and auto refresh 0
 Token not found. Returning REQUEST_DENIED
 ========= REQUEST AUTHORIZATION =========
-User not found
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: USER_NOT_FOUND for user 111111111111111 with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user 111111111111111
-Approval added: Applications RX for token USER_NOT_FOUND
-Approval added: Files RIMD for token USER_NOT_FOUND
-Approval added: UserData RM for token USER_NOT_FOUND
-Signing the token and returning it
-Token with id USER_NOT_FOUND will be signed
-Token with id USER_NOT_FOUND has been signed
-User not found. Returning USER_NOT_FOUND
-========= REQUEST AUTHORIZATION =========
 User found
-Token generated: 6fx4i628d0fdN18
+Token generated: pPHXta6YpMas3RJ
 ========= APPROVE REQUEST TOKEN =========
-Request signature for token: 6fx4i628d0fdN18 for user f80N46i82fdx61d with refresh token 0
+Request signature for token: pPHXta6YpMas3RJ for user PYM3XptJ6asHaRp with refresh token 0
 Token not found. Adding it to the list
-Adding approvals to token for user f80N46i82fdx61d
-Approval added: Preferences R for token 6fx4i628d0fdN18
-Approval added: UserData R for token 6fx4i628d0fdN18
+Adding approvals to token for user PYM3XptJ6asHaRp
+Approval added: Applications RIMD for token pPHXta6YpMas3RJ
 Signing the token and returning it
-Token with id 6fx4i628d0fdN18 will be signed
-Token with id 6fx4i628d0fdN18 has been signed
+Token with id pPHXta6YpMas3RJ will be signed
+Token with id pPHXta6YpMas3RJ has been signed
 ========= REQUEST ACCESS TOKEN =========
-Request access token for user f80N46i82fdx61d with auth token 6fx4i628d0fdN18 and auto refresh 0
+Request access token for user PYM3XptJ6asHaRp with auth token pPHXta6YpMas3RJ and auto refresh 0
 Token found and signed. Generating an access token
-Access token generated: 62i4x180d6Nff8d
-Approval added: UserData R for token 62i4x180d6Nff8d
-Approval added: Preferences R for token 62i4x180d6Nff8d
-Adding access token 62i4x180d6Nff8d to the user f80N46i82fdx61d in the user_to_access_token map
-Approval for this access token: Preferences R
-Approval for this access token: UserData R
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: v53teNBmWTXjUd0
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: v53teNBmWTXjUd0 for user X5B0TWjmeNtU3vd with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user X5B0TWjmeNtU3vd
-Approval added: Files RIMD for token v53teNBmWTXjUd0
-Approval added: Applications RIMDX for token v53teNBmWTXjUd0
-Approval added: SystemData RIMD for token v53teNBmWTXjUd0
-Signing the token and returning it
-Token with id v53teNBmWTXjUd0 will be signed
-Token with id v53teNBmWTXjUd0 has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user X5B0TWjmeNtU3vd with auth token v53teNBmWTXjUd0 and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: 0Ud5mTtBWNvj3eX
-Approval added: SystemData RIMD for token 0Ud5mTtBWNvj3eX
-Approval added: Applications RIMDX for token 0Ud5mTtBWNvj3eX
-Approval added: Files RIMD for token 0Ud5mTtBWNvj3eX
-Adding access token 0Ud5mTtBWNvj3eX to the user X5B0TWjmeNtU3vd in the user_to_access_token map
-Approval for this access token: Files RIMD
-Approval for this access token: Applications RIMDX
-Approval for this access token: SystemData RIMD
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: dvBj3mU5WXTtN0e
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: dvBj3mU5WXTtN0e for user X5B0TWjmeNtU3vd with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user X5B0TWjmeNtU3vd
-Approval added: Applications RIMD for token dvBj3mU5WXTtN0e
-Signing the token and returning it
-Token with id dvBj3mU5WXTtN0e will be signed
-Token with id dvBj3mU5WXTtN0e has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user X5B0TWjmeNtU3vd with auth token dvBj3mU5WXTtN0e and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: e0UBjdmTXWtv35N
-Approval added: Applications RIMD for token e0UBjdmTXWtv35N
-Adding access token e0UBjdmTXWtv35N to the user X5B0TWjmeNtU3vd in the user_to_access_token map
+Access token generated: p6tXHRYMsa3PaJp
+Approval added: Applications RIMD for token p6tXHRYMsa3PaJp
+Adding access token p6tXHRYMsa3PaJp to the user PYM3XptJ6asHaRp in the user_to_access_token map
 Approval for this access token: Applications RIMD
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: mxvJQE2whHrcDPm
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: mxvJQE2whHrcDPm for user QHmJh2xwErPDcmv with refresh token 0
-Token not found. Adding it to the list
-No approvals found for user QHmJh2xwErPDcmv
-========= REQUEST ACCESS TOKEN =========
-Request access token for user QHmJh2xwErPDcmv with auth token mxvJQE2whHrcDPm and auto refresh 0
-Token not found. Returning REQUEST_DENIED
-========= REQUEST AUTHORIZATION =========
-User not found
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: USER_NOT_FOUND for user 111111111111111 with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user 111111111111111
-Approval added: Applications RX for token USER_NOT_FOUND
-Approval added: Files RIMD for token USER_NOT_FOUND
-Approval added: UserData RM for token USER_NOT_FOUND
-Signing the token and returning it
-Token with id USER_NOT_FOUND will be signed
-Token with id USER_NOT_FOUND has been signed
-User not found. Returning USER_NOT_FOUND
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: 6fx4i628d0fdN18
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: 6fx4i628d0fdN18 for user f80N46i82fdx61d with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user f80N46i82fdx61d
-Approval added: Preferences R for token 6fx4i628d0fdN18
-Approval added: UserData R for token 6fx4i628d0fdN18
-Signing the token and returning it
-Token with id 6fx4i628d0fdN18 will be signed
-Token with id 6fx4i628d0fdN18 has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user f80N46i82fdx61d with auth token 6fx4i628d0fdN18 and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: 62i4x180d6Nff8d
-Approval added: UserData R for token 62i4x180d6Nff8d
-Approval added: Preferences R for token 62i4x180d6Nff8d
-Adding access token 62i4x180d6Nff8d to the user f80N46i82fdx61d in the user_to_access_token map
-Approval for this access token: Preferences R
-Approval for this access token: UserData R
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: v53teNBmWTXjUd0
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: v53teNBmWTXjUd0 for user X5B0TWjmeNtU3vd with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user X5B0TWjmeNtU3vd
-Approval added: Files RIMD for token v53teNBmWTXjUd0
-Approval added: Applications RIMDX for token v53teNBmWTXjUd0
-Approval added: SystemData RIMD for token v53teNBmWTXjUd0
-Signing the token and returning it
-Token with id v53teNBmWTXjUd0 will be signed
-Token with id v53teNBmWTXjUd0 has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user X5B0TWjmeNtU3vd with auth token v53teNBmWTXjUd0 and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: 0Ud5mTtBWNvj3eX
-Approval added: SystemData RIMD for token 0Ud5mTtBWNvj3eX
-Approval added: Applications RIMDX for token 0Ud5mTtBWNvj3eX
-Approval added: Files RIMD for token 0Ud5mTtBWNvj3eX
-Adding access token 0Ud5mTtBWNvj3eX to the user X5B0TWjmeNtU3vd in the user_to_access_token map
-Approval for this access token: Files RIMD
-Approval for this access token: Applications RIMDX
-Approval for this access token: SystemData RIMD
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: dvBj3mU5WXTtN0e
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: dvBj3mU5WXTtN0e for user X5B0TWjmeNtU3vd with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user X5B0TWjmeNtU3vd
-Approval added: Applications RIMD for token dvBj3mU5WXTtN0e
-Signing the token and returning it
-Token with id dvBj3mU5WXTtN0e will be signed
-Token with id dvBj3mU5WXTtN0e has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user X5B0TWjmeNtU3vd with auth token dvBj3mU5WXTtN0e and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: e0UBjdmTXWtv35N
-Approval added: Applications RIMD for token e0UBjdmTXWtv35N
-Adding access token e0UBjdmTXWtv35N to the user X5B0TWjmeNtU3vd in the user_to_access_token map
-Approval for this access token: Applications RIMD
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: mxvJQE2whHrcDPm
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: mxvJQE2whHrcDPm for user QHmJh2xwErPDcmv with refresh token 0
-Token not found. Adding it to the list
-No approvals found for user QHmJh2xwErPDcmv
-========= REQUEST ACCESS TOKEN =========
-Request access token for user QHmJh2xwErPDcmv with auth token mxvJQE2whHrcDPm and auto refresh 0
-Token not found. Returning REQUEST_DENIED
-========= REQUEST AUTHORIZATION =========
-User not found
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: USER_NOT_FOUND for user 111111111111111 with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user 111111111111111
-Approval added: Applications RX for token USER_NOT_FOUND
-Approval added: Files RIMD for token USER_NOT_FOUND
-Approval added: UserData RM for token USER_NOT_FOUND
-Signing the token and returning it
-Token with id USER_NOT_FOUND will be signed
-Token with id USER_NOT_FOUND has been signed
-User not found. Returning USER_NOT_FOUND
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: 6fx4i628d0fdN18
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: 6fx4i628d0fdN18 for user f80N46i82fdx61d with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user f80N46i82fdx61d
-Approval added: Preferences R for token 6fx4i628d0fdN18
-Approval added: UserData R for token 6fx4i628d0fdN18
-Signing the token and returning it
-Token with id 6fx4i628d0fdN18 will be signed
-Token with id 6fx4i628d0fdN18 has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user f80N46i82fdx61d with auth token 6fx4i628d0fdN18 and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: 62i4x180d6Nff8d
-Approval added: UserData R for token 62i4x180d6Nff8d
-Approval added: Preferences R for token 62i4x180d6Nff8d
-Adding access token 62i4x180d6Nff8d to the user f80N46i82fdx61d in the user_to_access_token map
-Approval for this access token: Preferences R
-Approval for this access token: UserData R
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: v53teNBmWTXjUd0
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: v53teNBmWTXjUd0 for user X5B0TWjmeNtU3vd with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user X5B0TWjmeNtU3vd
-Approval added: Files RIMD for token v53teNBmWTXjUd0
-Approval added: Applications RIMDX for token v53teNBmWTXjUd0
-Approval added: SystemData RIMD for token v53teNBmWTXjUd0
-Signing the token and returning it
-Token with id v53teNBmWTXjUd0 will be signed
-Token with id v53teNBmWTXjUd0 has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user X5B0TWjmeNtU3vd with auth token v53teNBmWTXjUd0 and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: 0Ud5mTtBWNvj3eX
-Approval added: SystemData RIMD for token 0Ud5mTtBWNvj3eX
-Approval added: Applications RIMDX for token 0Ud5mTtBWNvj3eX
-Approval added: Files RIMD for token 0Ud5mTtBWNvj3eX
-Adding access token 0Ud5mTtBWNvj3eX to the user X5B0TWjmeNtU3vd in the user_to_access_token map
-Approval for this access token: Files RIMD
-Approval for this access token: Applications RIMDX
-Approval for this access token: SystemData RIMD
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: dvBj3mU5WXTtN0e
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: dvBj3mU5WXTtN0e for user X5B0TWjmeNtU3vd with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user X5B0TWjmeNtU3vd
-Approval added: Applications RIMD for token dvBj3mU5WXTtN0e
-Signing the token and returning it
-Token with id dvBj3mU5WXTtN0e will be signed
-Token with id dvBj3mU5WXTtN0e has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user X5B0TWjmeNtU3vd with auth token dvBj3mU5WXTtN0e and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: e0UBjdmTXWtv35N
-Approval added: Applications RIMD for token e0UBjdmTXWtv35N
-Adding access token e0UBjdmTXWtv35N to the user X5B0TWjmeNtU3vd in the user_to_access_token map
-Approval for this access token: Applications RIMD
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: mxvJQE2whHrcDPm
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: mxvJQE2whHrcDPm for user QHmJh2xwErPDcmv with refresh token 0
-Token not found. Adding it to the list
-No approvals found for user QHmJh2xwErPDcmv
-========= REQUEST ACCESS TOKEN =========
-Request access token for user QHmJh2xwErPDcmv with auth token mxvJQE2whHrcDPm and auto refresh 0
-Token not found. Returning REQUEST_DENIED
-========= REQUEST AUTHORIZATION =========
-User not found
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: USER_NOT_FOUND for user 111111111111111 with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user 111111111111111
-Approval added: Applications RX for token USER_NOT_FOUND
-Approval added: Files RIMD for token USER_NOT_FOUND
-Approval added: UserData RM for token USER_NOT_FOUND
-Signing the token and returning it
-Token with id USER_NOT_FOUND will be signed
-Token with id USER_NOT_FOUND has been signed
-User not found. Returning USER_NOT_FOUND
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: 6fx4i628d0fdN18
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: 6fx4i628d0fdN18 for user f80N46i82fdx61d with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user f80N46i82fdx61d
-Approval added: Preferences R for token 6fx4i628d0fdN18
-Approval added: UserData R for token 6fx4i628d0fdN18
-Signing the token and returning it
-Token with id 6fx4i628d0fdN18 will be signed
-Token with id 6fx4i628d0fdN18 has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user f80N46i82fdx61d with auth token 6fx4i628d0fdN18 and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: 62i4x180d6Nff8d
-Approval added: UserData R for token 62i4x180d6Nff8d
-Approval added: Preferences R for token 62i4x180d6Nff8d
-Adding access token 62i4x180d6Nff8d to the user f80N46i82fdx61d in the user_to_access_token map
-Approval for this access token: Preferences R
-Approval for this access token: UserData R
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: v53teNBmWTXjUd0
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: v53teNBmWTXjUd0 for user X5B0TWjmeNtU3vd with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user X5B0TWjmeNtU3vd
-Approval added: Files RIMD for token v53teNBmWTXjUd0
-Approval added: Applications RIMDX for token v53teNBmWTXjUd0
-Approval added: SystemData RIMD for token v53teNBmWTXjUd0
-Signing the token and returning it
-Token with id v53teNBmWTXjUd0 will be signed
-Token with id v53teNBmWTXjUd0 has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user X5B0TWjmeNtU3vd with auth token v53teNBmWTXjUd0 and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: 0Ud5mTtBWNvj3eX
-Approval added: SystemData RIMD for token 0Ud5mTtBWNvj3eX
-Approval added: Applications RIMDX for token 0Ud5mTtBWNvj3eX
-Approval added: Files RIMD for token 0Ud5mTtBWNvj3eX
-Adding access token 0Ud5mTtBWNvj3eX to the user X5B0TWjmeNtU3vd in the user_to_access_token map
-Approval for this access token: Files RIMD
-Approval for this access token: Applications RIMDX
-Approval for this access token: SystemData RIMD
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: dvBj3mU5WXTtN0e
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: dvBj3mU5WXTtN0e for user X5B0TWjmeNtU3vd with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user X5B0TWjmeNtU3vd
-Approval added: Applications RIMD for token dvBj3mU5WXTtN0e
-Signing the token and returning it
-Token with id dvBj3mU5WXTtN0e will be signed
-Token with id dvBj3mU5WXTtN0e has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user X5B0TWjmeNtU3vd with auth token dvBj3mU5WXTtN0e and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: e0UBjdmTXWtv35N
-Approval added: Applications RIMD for token e0UBjdmTXWtv35N
-Adding access token e0UBjdmTXWtv35N to the user X5B0TWjmeNtU3vd in the user_to_access_token map
-Approval for this access token: Applications RIMD
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: mxvJQE2whHrcDPm
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: mxvJQE2whHrcDPm for user QHmJh2xwErPDcmv with refresh token 0
-Token not found. Adding it to the list
-No approvals found for user QHmJh2xwErPDcmv
-========= REQUEST ACCESS TOKEN =========
-Request access token for user QHmJh2xwErPDcmv with auth token mxvJQE2whHrcDPm and auto refresh 0
-Token not found. Returning REQUEST_DENIED
-========= REQUEST AUTHORIZATION =========
-User not found
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: USER_NOT_FOUND for user 111111111111111 with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user 111111111111111
-Approval added: Applications RX for token USER_NOT_FOUND
-Approval added: Files RIMD for token USER_NOT_FOUND
-Approval added: UserData RM for token USER_NOT_FOUND
-Signing the token and returning it
-Token with id USER_NOT_FOUND will be signed
-Token with id USER_NOT_FOUND has been signed
-User not found. Returning USER_NOT_FOUND
-========= REQUEST AUTHORIZATION =========
-User found
-Token generated: 6fx4i628d0fdN18
-========= APPROVE REQUEST TOKEN =========
-Request signature for token: 6fx4i628d0fdN18 for user f80N46i82fdx61d with refresh token 0
-Token not found. Adding it to the list
-Adding approvals to token for user f80N46i82fdx61d
-Approval added: Preferences R for token 6fx4i628d0fdN18
-Approval added: UserData R for token 6fx4i628d0fdN18
-Signing the token and returning it
-Token with id 6fx4i628d0fdN18 will be signed
-Token with id 6fx4i628d0fdN18 has been signed
-========= REQUEST ACCESS TOKEN =========
-Request access token for user f80N46i82fdx61d with auth token 6fx4i628d0fdN18 and auto refresh 0
-Token found and signed. Generating an access token
-Access token generated: 62i4x180d6Nff8d
-Approval added: UserData R for token 62i4x180d6Nff8d
-Approval added: Preferences R for token 62i4x180d6Nff8d
-Adding access token 62i4x180d6Nff8d to the user f80N46i82fdx61d in the user_to_access_token map
-Approval for this access token: Preferences R
-Approval for this access token: UserData R
+========= VALIDATE DELEGATED ACTION =========
+Validating delegated action for user with access token p6tXHRYMsa3PaJp for operation EXECUTE on resource Random
+Access token with id p6tXHRYMsa3PaJp with lifetime 2 found for user PYM3XptJ6asHaRp
+Resource not found

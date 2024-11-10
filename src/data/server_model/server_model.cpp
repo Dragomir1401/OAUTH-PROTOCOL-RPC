@@ -9,6 +9,7 @@ int global_token_lifetime;
 
 Token::Token()
 {
+    initialize_operation_to_code();
 }
 
 Token::Token(std::string token, std::string user_id, int lifetime, TOKEN_STATUS status)
@@ -17,6 +18,7 @@ Token::Token(std::string token, std::string user_id, int lifetime, TOKEN_STATUS 
     this->user_id = user_id;
     this->lifetime = lifetime;
     this->status = status;
+    initialize_operation_to_code();
 }
 
 Token::Token(std::string token, std::string refresh_token, std::string user_id, int lifetime, TOKEN_STATUS status)
@@ -26,6 +28,7 @@ Token::Token(std::string token, std::string refresh_token, std::string user_id, 
     this->user_id = user_id;
     this->lifetime = lifetime;
     this->status = status;
+    initialize_operation_to_code();
 }
 
 Token::Token(std::unordered_map<std::string, std::string> approvals, std::string token, std::string user_id, int lifetime, TOKEN_STATUS status)
@@ -35,6 +38,7 @@ Token::Token(std::unordered_map<std::string, std::string> approvals, std::string
     this->user_id = user_id;
     this->lifetime = lifetime;
     this->status = status;
+    initialize_operation_to_code();
 }
 
 Token::~Token()
@@ -116,4 +120,18 @@ void Token::log(std::string message, int level)
 void Token::decrease_lifetime()
 {
     this->lifetime--;
+}
+
+std::unordered_map<std::string, std::string> Token::get_operation_to_code()
+{
+    return this->operation_to_code;
+}
+
+void Token::initialize_operation_to_code()
+{
+    operation_to_code["MODIFY"] = "M";
+    operation_to_code["INSERT"] = "I";
+    operation_to_code["DELETE"] = "D";
+    operation_to_code["READ"] = "R";
+    operation_to_code["EXECUTE"] = "X";
 }

@@ -22,70 +22,69 @@ void OperationProcessor::process_command(Operation *operation, CLIENT *client)
     // check if the user has the access token
     std::unordered_map<std::string, access_token_t> user_to_access_token = client_model.get_user_to_access_token();
     std::string user_id = operation->get_user_id();
+    std::string access_token_builder = "";
 
     if (user_to_access_token.find(user_id) == user_to_access_token.end())
     {
         log("User " + user_id + " does not have an access token", 1);
     }
-    else
+    else if (user_to_access_token[user_id].expiration <= 0)
     {
-        log("User " + user_id + " has an access token", 1);
+        log("Access token expired.", 1);
 
-        // if the access token is expired
-        if (user_to_access_token[user_id].expiration <= 0)
+        // if auto refresh is enabled
+        if (user_to_access_token[user_id].refresh_token != "")
         {
-            log("Access token expired.", 1);
+            log("Auto refresh enabled. Refreshing token", 1);
 
-            // if auto refresh is enabled
-            if (user_to_access_token[user_id].refresh_token != "")
-            {
-                log("Auto refresh enabled. Refreshing token", 1);
+            // refresh the access token
+            access_token_t *result = refresh_access_1(&user_to_access_token[user_id], client);
 
-                // refresh the access token
-                access_token_t *result = refresh_access_1(&user_to_access_token[user_id], client);
-
-                if (result == (access_token_t *)NULL)
-                {
-                    clnt_perror(client, "call failed");
-                }
-
-                log("Access token refreshed: " + std::string(result->access_token) + " with refresh token: " + std::string(result->refresh_token) + " and expiration: " + std::to_string(result->expiration), 1);
-
-                // update the access token in the client model
-                client_model.add_access_token(user_id, *result);
-            }
-            else
-            {
-                log("Auto refresh not enabled. Not sending the request", 1);
-            }
-        }
-        else
-        {
-            log("Access token not expired. Using it", 1);
-
-            // convert the fields from the operation to char *
-            char *operation_type = strdup(operation->get_action().c_str());
-            char *resource = strdup(operation->get_resource().c_str());
-            std::string access_token_str = user_to_access_token[user_id].access_token;
-            char *access_token = strdup(access_token_str.c_str());
-
-            // create a delegated action request
-            delegated_action_request_t delegated_action_request;
-            delegated_action_request.operation_type = operation_type;
-            delegated_action_request.resource = resource;
-            delegated_action_request.access_token = access_token;
-
-            // request to validate the delegated action
-            char **result = validate_delegated_action_1(&delegated_action_request, client);
-
-            if (result == (char **)NULL)
+            if (result == (access_token_t *)NULL)
             {
                 clnt_perror(client, "call failed");
             }
 
-            log("Delegated action validation result: " + std::string(*result), 1);
+            log("Access token refreshed: " + std::string(result->access_token) + " with refresh token: " + std::string(result->refresh_token) + " and expiration: " + std::to_string(result->expiration), 1);
+
+            // update the access token in the client model
+            client_model.add_access_token(user_id, *result);
+        }
+        else
+        {
+            log("Auto refresh not enabled. Not sending the request", 1);
         }
     }
+
+    // convert the fields from the operation to char *
+    char *operation_type = strdup(operation->get_action().c_str());
+    char *resource = strdup(operation->get_resource().c_str());
+    if (user_to_access_token.find(user_id) != user_to_access_token.end())
+    {
+        access_token_builder = user_to_access_token[user_id].access_token;
+    }
+
+    std::string access_token_str = access_token_builder;
+    char *access_token = strdup(access_token_str.c_str());
+
+    // create a delegated action request
+    delegated_action_request_t delegated_action_request;
+    delegated_action_request.operation_type = operation_type;
+    delegated_action_request.resource = resource;
+    delegated_action_request.access_token = access_token;
+
+    // request to validate the delegated action
+    char **result = validate_delegated_action_1(&delegated_action_request, client);
+
+    if (result == (char **)NULL)
+    {
+        clnt_perror(client, "call failed");
+    }
+
+    // log on stream 0 the result of the delegated action validation
+    log(std::string(*result), 0);
+
+    log("Delegated action validation result: " + std::string(*result), 1);
 }
 
 void OperationProcessor::process_operations()
@@ -119,14 +118,14 @@ void OperationProcessor::process_operations()
             log("Access token received: " + std::string(result->access_token) + " with refresh token: " + std::string(result->refresh_token) + " and expiration: " + std::to_string(result->expiration), 1);
 
             // if request is denied print it
-            if (logError(result->access_token, 0) == -1)
+            if (logResponse(result->access_token, 0) == -1)
             {
                 log(std::string(access_token_request.authentification_token) + " -> " + std::string(result->access_token), 0);
                 // add the access token in the client model
                 client_model.add_access_token(access_token_request.user_id, *result);
             }
         }
-        else if (operation->is_modify() || operation->is_read() || operation->is_delete() || operation->is_insert())
+        else if (operation->is_modify() || operation->is_read() || operation->is_delete() || operation->is_insert() || operation->is_execute())
         {
             // check if the user has the access token
             std::unordered_map<std::string, access_token_t> user_to_access_token = client_model.get_user_to_access_token();
@@ -136,11 +135,8 @@ void OperationProcessor::process_operations()
             {
                 log("User " + user_id + " does not have an access token", 1);
             }
-            else
-            {
-                log("User " + user_id + " has an access token", 1);
-                process_command(operation, client);
-            }
+
+            process_command(operation, client);
         }
     }
 }
@@ -219,7 +215,7 @@ void OperationProcessor::log(std::string message, int level)
     }
 }
 
-int OperationProcessor::logError(char *error, int level)
+int OperationProcessor::logResponse(char *error, int level)
 {
     // if request is denied print it
     if (strcmp(error, ResponseCodes::getString(ResponseCodes::REQUEST_DENIED).c_str()) == 0)

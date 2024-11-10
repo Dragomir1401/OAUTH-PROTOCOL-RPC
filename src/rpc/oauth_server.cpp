@@ -182,6 +182,15 @@ validate_delegated_action_1_svc(delegated_action_request_t *argp, struct svc_req
 	log("========= VALIDATE DELEGATED ACTION =========", 2);
 	log("Validating delegated action for user with access token " + access_token_str + " for operation " + operation_type + " on resource " + resource, 2);
 
+	// if access_token_str is "" print a DENY (Operation,Resource,access_tokien,valability) and return a PERMISSION_DENIED error
+	if (access_token_str == "")
+	{
+		log("Access token is empty. Returning PERMISSION_DENIED", 2);
+		log("DENY (" + operation_type + "," + resource + "," + access_token_str + ",0)", 0);
+		result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_DENIED).c_str());
+		return &result;
+	}
+
 	// check if the access token is in the user_to_access_token map
 	for (auto const &user_access_token : user_to_access_token)
 	{
@@ -192,23 +201,28 @@ validate_delegated_action_1_svc(delegated_action_request_t *argp, struct svc_req
 			Token access_token = user_to_access_token[user_access_token.first];
 
 			// based on the token, find the token in the
-			log("Access token with id " + access_token_str + " found for user " + user_access_token.first, 2);
+			log("Access token with id " + access_token_str + " with lifetime " + std::to_string(access_token.get_lifetime()) + " found for user " + user_access_token.first, 2);
 
 			// check if the token is expired
 			if (access_token.get_lifetime() <= 0)
 			{
 				log("Access token expired", 2);
+				// log to stream 0 DENY (Operaion,Resource,access_token,validity)
+				log("DENY (" + operation_type + "," + resource + "," + ",0)", 0);
 				result = strdup(ResponseCodes::getString(ResponseCodes::TOKEN_EXPIRED).c_str());
 				return &result;
 			}
 
 			// decrease the lifetime of the token
+			user_to_access_token[user_access_token.first].decrease_lifetime();
 			access_token.decrease_lifetime();
 
 			// check if the resource exists in the resource_list
 			if (std::find(resource_list.begin(), resource_list.end(), resource) == resource_list.end())
 			{
 				log("Resource not found", 2);
+				// log to stream 0 DENY (Operaion,Resource,access_token,validity)
+				log("DENY (" + operation_type + "," + resource + "," + access_token_str + "," + std::to_string(access_token.get_lifetime()) + ")", 0);
 				result = strdup(ResponseCodes::getString(ResponseCodes::RESOURCE_NOT_FOUND).c_str());
 				return &result;
 			}
@@ -228,22 +242,31 @@ validate_delegated_action_1_svc(delegated_action_request_t *argp, struct svc_req
 				log("Approval: " + approval.first + " " + approval.second, 2);
 			}
 
-			if (approvals.find(resource) != approvals.end())
+			log("Searching for operation type " + operation_type + " in the approvals", 2);
+
+			// if the resource appears in approvals and the operation type lets say "D" for delete appears in the approvals string of that resource
+			if (approvals.find(resource) != approvals.end() && approvals[resource].find(access_token.get_operation_to_code()[operation_type]) != std::string::npos)
 			{
 				log("User has the permission to perform the action", 2);
+				// log to stream 0 PERMIT (Operaion,Resource,access_token,validity)
+				log("PERMIT (" + operation_type + "," + resource + "," + access_token_str + "," + std::to_string(access_token.get_lifetime()) + ")", 0);
 				result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_GRANTED).c_str());
 				return &result;
 			}
 			else
 			{
 				log("User does not have the permission to perform the action", 2);
-				result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_DENIED).c_str());
+				// log to stream 0 DENY (Operaion,Resource,access_token,validity)
+				log("DENY (" + operation_type + "," + resource + "," + access_token_str + "," + std::to_string(access_token.get_lifetime()) + ")", 0);
+				result = strdup(ResponseCodes::getString(ResponseCodes::OPERATION_NOT_PERMITTED).c_str());
 				return &result;
 			}
 		}
 		else
 		{
 			log("Access token not found", 2);
+			// log to stream 0 DENY (Operaion,Resource,access_token,validity)
+			log("DENY (" + operation_type + "," + resource + "," + access_token_str + ", 0)", 0);
 			result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_DENIED).c_str());
 			return &result;
 		}
@@ -251,6 +274,8 @@ validate_delegated_action_1_svc(delegated_action_request_t *argp, struct svc_req
 
 	// if the access token is not found return an error
 	log("Access token not found", 2);
+	// log to stream 0 DENY (Operaion,Resource,access_token,validity)
+	log("DENY (" + operation_type + "," + resource + "," + access_token_str + ", 0)", 0);
 	result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_DENIED).c_str());
 	return &result;
 }
@@ -315,8 +340,8 @@ approve_request_token_1_svc(request_authorization_t *argp, struct svc_req *rqstp
 	Token token = Token(argp->authentification_token, user_id_str, global_token_lifetime, Token::AUTH_UNSIGNED);
 
 	// based on the approvals the user has in user_to_approvals_list, add them to the token
-	std::unordered_map<std::string, std::string> approvals = user_to_approvals_list.back();
-	user_to_approvals_list.pop_back();
+	std::unordered_map<std::string, std::string> approvals = user_to_approvals_list[0];
+	user_to_approvals_list.erase(user_to_approvals_list.begin());
 
 	// if there are no approvals return token as unsigned
 	if (approvals.empty() || (approvals.find("*") != approvals.end() && approvals["*"] == "-"))

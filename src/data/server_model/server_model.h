@@ -33,14 +33,17 @@ public:
     void sign();
     void log(std::string message, int level);
     void decrease_lifetime();
+    std::unordered_map<std::string, std::string> get_operation_to_code();
 
 private:
+    void initialize_operation_to_code();
     std::unordered_map<std::string, std::string> approvals;
     std::string token;
     std::string refresh_token;
     std::string user_id;
     int lifetime;
     TOKEN_STATUS status;
+    std::unordered_map<std::string, std::string> operation_to_code;
 };
 
 extern std::vector<std::string> user_list;

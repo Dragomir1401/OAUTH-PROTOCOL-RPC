@@ -57,6 +57,11 @@ bool Operation::is_read()
     return action == READ;
 }
 
+bool Operation::is_execute()
+{
+    return action == EXECUTE;
+}
+
 std::string Operation::to_string()
 {
     return "User: " + user_id + " Action: " + action + " Resource: " + resource + " Auto Refresh: " + std::to_string(auto_refresh);
