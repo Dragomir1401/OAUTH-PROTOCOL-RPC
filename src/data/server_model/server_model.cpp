@@ -65,7 +65,7 @@ void Token::add_approvals(std::unordered_map<std::string, std::string> approvals
     }
 }
 
-std::string Token::get_token()
+std::string Token::get_token() const
 {
     return this->token;
 }

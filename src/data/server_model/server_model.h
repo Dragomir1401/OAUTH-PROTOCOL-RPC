@@ -25,7 +25,7 @@ public:
     std::unordered_map<std::string, std::string> get_approvals();
     void add_approval(std::string resource, std::string permission);
     void add_approvals(std::unordered_map<std::string, std::string> approvals);
-    std::string get_token();
+    std::string get_token() const;
     std::string get_user_id();
     int get_lifetime();
     TOKEN_STATUS get_status();
