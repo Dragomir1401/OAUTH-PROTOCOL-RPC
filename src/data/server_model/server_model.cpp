@@ -70,7 +70,7 @@ std::string Token::get_token() const
     return this->token;
 }
 
-std::string Token::get_user_id()
+std::string Token::get_user_id() const
 {
     return this->user_id;
 }

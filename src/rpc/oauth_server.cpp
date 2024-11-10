@@ -346,8 +346,48 @@ char **validate_delegated_action_1_svc(delegated_action_request_t *argp, struct 
 	return &result;
 }
 
-char **
-approve_request_token_1_svc(request_authorization_t *argp, struct svc_req *rqstp)
+// Find the token in the auth_token_list
+Token *find_token(const std::string &token_received)
+{
+	for (Token &token : auth_token_list)
+	{
+		if (token.get_token() == token_received)
+		{
+			return &token;
+		}
+	}
+	return nullptr;
+}
+
+// Check if approvals are available and valid for a user
+bool has_valid_approvals(std::unordered_map<std::string, std::string> &approvals)
+{
+	return !approvals.empty() && !(approvals.find("*") != approvals.end() && approvals["*"] == "-");
+}
+
+// Add approvals to a token and sign it if unsigned
+void add_approvals_and_sign(Token &token, const std::unordered_map<std::string, std::string> &approvals, const std::string &user_id_str)
+{
+	log("Adding approvals to token for user " + user_id_str, 2);
+	token.add_approvals(approvals);
+
+	// Sign the token if it's not already signed
+	if (token.get_status() != Token::AUTH_SIGNED)
+	{
+		log("Signing the token and returning it", 2);
+		token.sign();
+	}
+}
+
+// Return the token as a result
+char **return_token_result(const Token &token)
+{
+	static char *result;
+	result = strdup(token.get_token().c_str());
+	return &result;
+}
+
+char **approve_request_token_1_svc(request_authorization_t *argp, struct svc_req *rqstp)
 {
 	static char *result;
 
@@ -356,147 +396,147 @@ approve_request_token_1_svc(request_authorization_t *argp, struct svc_req *rqstp
 	int refresh_token = argp->refresh_token;
 
 	log("========= APPROVE REQUEST TOKEN =========", 2);
-	log("Request signature for token: " + token_received + " for user " + user_id_str + " with refresh token " + std::to_string(refresh_token), 2);
+	log("Request signature for token: " + token_received + " for user " + user_id_str +
+			" with refresh token " + std::to_string(refresh_token),
+		2);
 
-	// if we find the token in the list
-	for (Token token : auth_token_list)
+	// Find the token in the list
+	Token *token = find_token(token_received);
+	if (token != nullptr)
 	{
-		if (token.get_token() == token_received)
+		if (token->get_status() == Token::AUTH_SIGNED)
 		{
-			// if the token is signed
-			if (token.get_status() == Token::AUTH_SIGNED)
+			log("Token already signed. Returning the token", 2);
+			return return_token_result(*token); // Removed '&'
+		}
+		else
+		{
+			log("Found token as not signed. Signing the token", 2);
+			std::unordered_map<std::string, std::string> approvals = user_to_approvals_list.back();
+			user_to_approvals_list.pop_back();
+
+			if (!has_valid_approvals(approvals))
 			{
-				log("Token already signed. Returning the token", 2);
-				// return the token
-				strcpy(result, token.get_token().c_str());
+				log("No approvals found for user " + user_id_str, 2);
+				result = strdup(token_received.c_str());
 				return &result;
 			}
-			else
-			{
-				log("Found token as not signed. Signing the token", 2);
-				// based on the approvals the user has in user_to_approvals_list, add them to the token
-				// make user_id from argp string
-				std::unordered_map<std::string, std::string> approvals = user_to_approvals_list.back();
-				user_to_approvals_list.pop_back();
 
-				// if there are no approvals return token as unsigned
-				if (approvals.empty() || (approvals.find("*") != approvals.end() && approvals["*"] == "-"))
-				{
-					log("No approvals found for user " + user_id_str, 2);
-					strcpy(result, token_received.c_str());
-					return &result;
-				}
-
-				log("Adding approvals to token for user " + user_id_str, 2);
-				token.add_approvals(approvals);
-
-				// if the token is unsigned, sign it
-				log("Signing the token and returning it", 2);
-				token.sign();
-
-				// return the token
-				strcpy(result, token.get_token().c_str());
-				return &result;
-			}
+			add_approvals_and_sign(*token, approvals, user_id_str);
+			return return_token_result(*token); // Removed '&'
 		}
 	}
 
-	// return the token unchanged if no approvals are to be added
+	// Token not found, create a new one
 	log("Token not found. Adding it to the list", 2);
-	Token token = Token(argp->authentification_token, user_id_str, global_token_lifetime, Token::AUTH_UNSIGNED);
-
-	// based on the approvals the user has in user_to_approvals_list, add them to the token
+	Token new_token(token_received, user_id_str, global_token_lifetime, Token::AUTH_UNSIGNED);
 	std::unordered_map<std::string, std::string> approvals = user_to_approvals_list[0];
 	user_to_approvals_list.erase(user_to_approvals_list.begin());
 
-	// if there are no approvals return token as unsigned
-	if (approvals.empty() || (approvals.find("*") != approvals.end() && approvals["*"] == "-"))
+	if (!has_valid_approvals(approvals))
 	{
 		log("No approvals found for user " + user_id_str, 2);
-		strcpy(result, token_received.c_str());
+		result = strdup(token_received.c_str());
 		return &result;
 	}
 
-	log("Adding approvals to token for user " + user_id_str, 2);
-	token.add_approvals(approvals);
+	add_approvals_and_sign(new_token, approvals, user_id_str);
 
-	// if the token is unsigned, sign it
-	log("Signing the token and returning it", 2);
-	token.sign();
+	// Add the new token to the list and return it
+	auth_token_list.push_back(new_token);
+	return return_token_result(new_token); // Removed '&'
+}
 
-	// add the token to the list
-	auth_token_list.push_back(token);
+// Find the user ID based on the access token
+std::string find_user_id_by_token(const std::string &access_token_str)
+{
+	for (const auto &user_access_token : user_to_access_token)
+	{
+		if (user_access_token.second.get_token() == access_token_str)
+		{
+			return user_access_token.first;
+		}
+	}
+	return "";
+}
 
-	std::string result_str = token.get_token();
-	result = strdup(result_str.c_str());
+// Generate a new access and refresh token
+std::pair<std::string, std::string> generate_new_tokens(const std::string &refresh_token_str)
+{
+	std::string new_access_token = generate_access_token(strdup(refresh_token_str.c_str()));
+	std::string new_refresh_token = generate_access_token(strdup(new_access_token.c_str()));
+	return {new_access_token, new_refresh_token};
+}
 
+// Update the user’s access token in the map
+void update_user_access_token(const std::string &user_id, const Token &current_token,
+							  const std::string &new_access_token, const std::string &new_refresh_token)
+{
+	Token new_access_token_i(new_access_token, new_refresh_token, current_token.get_user_id(),
+							 global_token_lifetime, Token::ACCESS);
+	new_access_token_i.copy_all_approvals(current_token);
+	user_to_access_token[user_id] = new_access_token_i;
+}
+
+// Prepare and return the new access token in the result
+access_token_t *prepare_access_token_result(access_token_t &result,
+											const std::string &new_access_token,
+											const std::string &new_refresh_token)
+{
+	result.access_token = strdup(new_access_token.c_str());
+	result.refresh_token = strdup(new_refresh_token.c_str());
+	result.expiration = global_token_lifetime;
 	return &result;
 }
 
-access_token_t *
-refresh_access_1_svc(access_token_t *argp, struct svc_req *rqstp)
+// Handle the case where the access token is not found
+access_token_t *handle_token_not_found(access_token_t &result)
 {
-	// find the user id based on the access token
-	std::string user_id;
-	for (auto const &user_access_token : user_to_access_token)
-	{
-		Token user_access_token_i = user_access_token.second;
-		if (user_access_token_i.get_token() == argp->access_token)
-		{
-			user_id = user_access_token.first;
-			break;
-		}
-	}
-
-	// log in stream 0 BEGIN user_id AUTHZ REFRESH
-	log("BEGIN " + user_id + " AUTHZ REFRESH", 0);
-	static access_token_t result;
-
-	// parse the arguments
-	std::string access_token_str = argp->access_token;
-	std::string refresh_token_str = argp->refresh_token;
-
-	log("========= REFRESH ACCESS TOKEN =========", 2);
-	log("Refresh access token with access token " + access_token_str + " and refresh token " + refresh_token_str, 2);
-
-	// find the access token in the user_to_access_token map
-	for (auto const &user_access_token : user_to_access_token)
-	{
-		Token user_access_token_i = user_access_token.second;
-		if (user_access_token_i.get_token() == access_token_str)
-		{
-			log("Access token found. Refreshing it", 2);
-
-			// generate a new access token
-			std::string new_access_token = generate_access_token(strdup(refresh_token_str.c_str()));
-
-			// generate a new refresh token
-			std::string new_refresh_token = generate_access_token(strdup(new_access_token.c_str()));
-
-			// generate a new access token instance
-			Token new_access_token_i = Token(new_access_token, new_refresh_token, user_access_token_i.get_user_id(), global_token_lifetime, Token::ACCESS);
-			new_access_token_i.copy_all_approvals(user_access_token_i);
-
-			// update the access token in the user_to_access_token map
-			user_to_access_token[user_access_token.first] = new_access_token_i;
-
-			// return the new access token
-			result.access_token = strdup(new_access_token.c_str());
-			result.refresh_token = strdup(new_refresh_token.c_str());
-			result.expiration = global_token_lifetime;
-
-			log("  AccessToken = " + new_access_token, 0);
-			log("  RefreshToken = " + new_refresh_token, 0);
-
-			return &result;
-		}
-	}
-
-	// if the access token is not found return an error
 	log("Access token not found. Could not refresh it", 2);
 	result.access_token = strdup(ResponseCodes::getString(ResponseCodes::TOKEN_EXPIRED).c_str());
 	result.refresh_token = strdup(ResponseCodes::getString(ResponseCodes::TOKEN_EXPIRED).c_str());
 	result.expiration = -1;
-
 	return &result;
+}
+
+access_token_t *refresh_access_1_svc(access_token_t *argp, struct svc_req *rqstp)
+{
+	static access_token_t result;
+
+	// Parse the arguments
+	std::string access_token_str = argp->access_token;
+	std::string refresh_token_str = argp->refresh_token;
+
+	// Find the user ID based on the access token
+	std::string user_id = find_user_id_by_token(access_token_str);
+
+	// Log the user authorization refresh attempt
+	log("BEGIN " + user_id + " AUTHZ REFRESH", 0);
+	log("========= REFRESH ACCESS TOKEN =========", 2);
+	log("Refresh access token with access token " + access_token_str +
+			" and refresh token " + refresh_token_str,
+		2);
+
+	// If user ID is found, proceed to refresh the token
+	if (!user_id.empty())
+	{
+		Token &current_token = user_to_access_token[user_id];
+		log("Access token found. Refreshing it", 2);
+
+		// Generate new access and refresh tokens
+		std::pair<std::string, std::string> tokens = generate_new_tokens(refresh_token_str);
+		std::string new_access_token = tokens.first;
+		std::string new_refresh_token = tokens.second;
+
+		// Update the user access token map
+		update_user_access_token(user_id, current_token, new_access_token, new_refresh_token);
+
+		// Log and return the new access token result
+		log("  AccessToken = " + new_access_token, 0);
+		log("  RefreshToken = " + new_refresh_token, 0);
+		return prepare_access_token_result(result, new_access_token, new_refresh_token);
+	}
+
+	// If access token not found, handle it with an appropriate response
+	return handle_token_not_found(result);
 }
