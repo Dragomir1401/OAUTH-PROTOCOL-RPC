@@ -3,6 +3,10 @@
 #include <iostream>
 #include <fstream>
 
+OperationsParser::OperationsParser()
+{
+}
+
 OperationsParser::OperationsParser(char *input_file)
 {
     this->input_file = input_file;
@@ -12,6 +16,7 @@ OperationsParser::~OperationsParser()
 {
 }
 
+// Parse the operations from the input file
 std::vector<Operation *> OperationsParser::parse_operations()
 {
     std::vector<Operation *> operations;
@@ -30,19 +35,19 @@ std::vector<Operation *> OperationsParser::parse_operations()
 
         if (action == REQUEST)
         {
-            // rest of the line is the auto_refresh
+            // Rest of the line is the auto_refresh
             line = line.substr(line.find(',') + 1);
             auto_refresh = std::stoi(line);
         }
         else
         {
-            // rest of the line is the resource
+            // Rest of the line is the resource
             line = line.substr(line.find(',') + 1);
             resource = line;
         }
 
         Operation *operation = new Operation(user_id, action, resource, auto_refresh);
-        // add operation to operations list
+        // Add operation to operations list
         operations.push_back(operation);
     }
 

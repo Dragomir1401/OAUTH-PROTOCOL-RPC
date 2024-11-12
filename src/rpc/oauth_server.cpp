@@ -12,14 +12,20 @@
 #include <iostream>
 #include <algorithm>
 
+// Simple helper to log messages to a file
 void log_to_file(const std::string &message, const std::string &filename)
 {
 	std::ofstream log_file(filename, std::ios_base::app);
 	log_file << message << std::endl;
 }
 
+// Level logger
 void log(const std::string &message, int level = 0)
 {
+	// Level logger
+	// 1 - low severity client logs
+	// 2 - low severity server logs
+	// 0 - high severity logs
 	switch (level)
 	{
 	case 1:
@@ -34,50 +40,68 @@ void log(const std::string &message, int level = 0)
 	}
 }
 
+// Helper to check if a user exists in the user list
 bool user_exists(const std::string &user_id)
 {
 	return std::find(user_list.begin(), user_list.end(), user_id) != user_list.end();
 }
 
+// Helper to generate and log a token
 char *generate_and_log_token(const std::string &user_id)
 {
-	char *user_id_copy = strdup(user_id.c_str()); // Duplicate to get a non-const char*
+	// Duplicate to get a non-const char*
+	char *user_id_copy = strdup(user_id.c_str());
 	char *token = generate_access_token(user_id_copy);
-	free(user_id_copy); // Free the duplicated string after use
 
+	// Free the duplicated string after use
+	free(user_id_copy);
+
+	// Log at low severity server logs
 	log("Token generated: " + std::string(token), 2);
 	return token;
 }
 
+// Endpoint to request authorization to resources
 char **request_authorization_1_svc(char **argp, struct svc_req *rqstp)
 {
-	static char *result;
+	// Log header at low severity server logs
 	log("========= REQUEST AUTHORIZATION =========", 2);
 
+	static char *result;
 	std::string user_id = argp[0];
 
+	// Check if the user exists
 	if (user_exists(user_id))
 	{
 		log("User found", 2);
+
+		// Generate the token for the user and log it
 		result = generate_and_log_token(user_id);
 	}
 	else
 	{
 		log("User not found", 2);
+
+		// Return USER_NOT_FOUND if the user does not exist
 		result = strdup(ResponseCodes::getString(ResponseCodes::USER_NOT_FOUND).c_str());
 	}
+
 	return &result;
 }
 
+// Helper to set an error response
 void set_error_response(access_token_t &result, const std::string &code)
 {
+	// Use strdup to avoid memory problems
 	result.access_token = strdup(code.c_str());
 	result.refresh_token = strdup(code.c_str());
 	result.expiration = -1;
 }
 
+// Helper to check if a token exists in the auth_token_list
 bool token_exists(const std::string &token_str)
 {
+	// Check if the token exists in the auth_token_list
 	return std::any_of(auth_token_list.begin(), auth_token_list.end(),
 					   [&token_str](const Token &token)
 					   {
@@ -85,10 +109,13 @@ bool token_exists(const std::string &token_str)
 					   });
 }
 
+// Helper to get a signed token from the auth_token_list
 Token *get_signed_token(const std::string &token_str)
 {
+	// Find the token in the auth_token_list
 	for (Token &token : auth_token_list)
 	{
+		// Only if the token is signed
 		if (token.get_token() == token_str && token.get_status() == Token::AUTH_SIGNED)
 		{
 			return &token;
@@ -97,29 +124,45 @@ Token *get_signed_token(const std::string &token_str)
 	return nullptr;
 }
 
+// Helper to generate a refresh token from an access token
 std::string generate_refresh_token(const std::string &access_token)
 {
+	// Duplicate to get a non-const char*
 	char *access_token_copy = strdup(access_token.c_str());
+
+	// Generate a refresh token from the access token
 	std::string refresh_token = generate_access_token(access_token_copy);
-	free(access_token_copy); // Free the duplicated string
+
+	// Free the duplicated string
+	free(access_token_copy);
+
 	return refresh_token;
 }
 
+// Helper to add an access token to a user
 void add_access_token_to_user(const std::string &user_id, const Token &access_token)
 {
 	log("Adding access token " + access_token.get_token() + " to user " + user_id, 2);
 	user_to_access_token[user_id] = access_token;
 }
 
+// Endpoint to approve a request token
 access_token_t *request_access_token_1_svc(access_token_request_t *argp, struct svc_req *rqstp)
 {
+	// Log header at low severity server logs
+	log("========= REQUEST ACCESS TOKEN =========", 2);
+
 	static access_token_t result;
+
+	// Parse the arguments
 	std::string user_id = argp->user_id;
 	std::string token_received = argp->authentification_token;
 	int auto_refresh = argp->auto_refresh;
 
+	// Log the request at low severity server logs
 	log("BEGIN " + user_id + " AUTHZ", 0);
 
+	// If the user does not exist, we can stop here
 	if (!user_exists(user_id))
 	{
 		log("User not found. Returning USER_NOT_FOUND", 2);
@@ -127,9 +170,10 @@ access_token_t *request_access_token_1_svc(access_token_request_t *argp, struct 
 		return &result;
 	}
 
+	// Check if the token exists
 	log("  RequestToken = " + token_received, 0);
-	log("========= REQUEST ACCESS TOKEN =========", 2);
 
+	// Check if the token exists, if not then return REQUEST_DENIED
 	Token *token = get_signed_token(token_received);
 	if (!token)
 	{
@@ -138,18 +182,23 @@ access_token_t *request_access_token_1_svc(access_token_request_t *argp, struct 
 		return &result;
 	}
 
+	// Log the token found and signed
 	log("Token found and signed. Generating access token", 2);
 
 	// Convert `token_received` to `char*` for `generate_access_token`
 	char *token_received_copy = strdup(token_received.c_str());
 	std::string access_token_str = generate_access_token(token_received_copy);
-	free(token_received_copy); // Free the copy after use
 
+	// Free the copy after use
+	free(token_received_copy);
+
+	// Create the access token and add the approvals
 	Token access_token(access_token_str, user_id, global_token_lifetime, Token::ACCESS);
 	access_token.add_approvals(token->get_approvals());
 
 	if (auto_refresh)
 	{
+		// If the request has auto-refresh enabled, generate a refresh token
 		log("Auto-refresh enabled. Generating refresh token", 2);
 		std::string refresh_token = generate_refresh_token(access_token_str);
 		access_token.add_refresh_token(refresh_token);
@@ -157,6 +206,7 @@ access_token_t *request_access_token_1_svc(access_token_request_t *argp, struct 
 	}
 	else
 	{
+		// No refresh token if auto-refresh is disabled
 		result.refresh_token = strdup("NULL");
 	}
 
@@ -175,6 +225,7 @@ access_token_t *request_access_token_1_svc(access_token_request_t *argp, struct 
 	result.access_token = strdup(access_token_str.c_str());
 	result.expiration = global_token_lifetime;
 
+	// Log high severity server logs
 	log("  AccessToken = " + access_token_str, 0);
 	if (auto_refresh)
 		log("  RefreshToken = " + std::string(result.refresh_token), 0);
@@ -182,17 +233,17 @@ access_token_t *request_access_token_1_svc(access_token_request_t *argp, struct 
 	return &result;
 }
 
-#include <string>
-#include <unordered_map>
-#include <vector>
-
 // Helper to log validation result at level 0, with optional handling for empty or expired tokens
 void log_validation_result(const std::string &status, const std::string &operation_type,
 						   const std::string &resource, const std::string &access_token_str, int validity, bool omit_token = false)
 {
+	// Log the validation result
 	std::string log_message = status + " (" + operation_type + "," + resource + ",";
+
+	// Omit the token if requested
 	log_message += omit_token ? "" : access_token_str;
 	log_message += "," + std::to_string(validity) + ")";
+
 	log(log_message, 0);
 }
 
@@ -214,26 +265,13 @@ bool find_access_token(const std::string &access_token_str, Token &access_token,
 {
 	for (const auto &user_access_token : user_to_access_token)
 	{
+		// If the token is found, fill the access_token and user_id
 		if (user_access_token.second.get_token() == access_token_str)
 		{
 			access_token = user_access_token.second;
 			user_id = user_access_token.first;
 			return true;
 		}
-	}
-	return false;
-}
-
-// Helper to check if the token is expired
-bool is_token_expired(Token &access_token, const std::string &operation_type, const std::string &resource,
-					  const std::string &access_token_str, char *&result)
-{
-	if (access_token.get_lifetime() <= 0)
-	{
-		log("Access token expired", 2);
-		log_validation_result("DENY", operation_type, resource, access_token_str, 0);
-		result = strdup(ResponseCodes::getString(ResponseCodes::TOKEN_EXPIRED).c_str());
-		return true;
 	}
 	return false;
 }
@@ -257,11 +295,17 @@ bool has_required_approval(const Token &access_token, const std::string &resourc
 {
 	const auto &approvals = access_token.get_approvals();
 	auto it = approvals.find(resource);
+
+	// Check if the user has the required approval from the token
 	return it != approvals.end() && it->second.find(access_token.get_operation_to_code()[operation_type]) != std::string::npos;
 }
 
+// Endpoint to validate a Action on a resource
 char **validate_delegated_action_1_svc(delegated_action_request_t *argp, struct svc_req *rqstp)
 {
+	// Log header at low severity server logs
+	log("========= VALIDATE DELEGATED ACTION =========", 2);
+
 	static char *result;
 
 	// Parse the arguments
@@ -269,7 +313,6 @@ char **validate_delegated_action_1_svc(delegated_action_request_t *argp, struct 
 	std::string resource = argp->resource;
 	std::string access_token_str = argp->access_token;
 
-	log("========= VALIDATE DELEGATED ACTION =========", 2);
 	log("Validating delegated action for user with access token " + access_token_str +
 			" for operation " + operation_type + " on resource " + resource,
 		2);
@@ -332,12 +375,14 @@ char **validate_delegated_action_1_svc(delegated_action_request_t *argp, struct 
 	// Check if the user has the required approval
 	if (has_required_approval(access_token, resource, operation_type))
 	{
+		// All good, user has the permission, we can return PERMISSON_GRANTED
 		log("User has the permission to perform the action", 2);
 		log_validation_result("PERMIT", operation_type, resource, access_token_str, access_token.get_lifetime());
 		result = strdup(ResponseCodes::getString(ResponseCodes::PERMISSION_GRANTED).c_str());
 	}
 	else
 	{
+		// User does not have the permission, return PERMISSION_DENIED
 		log("User does not have the permission to perform the action", 2);
 		log_validation_result("DENY", operation_type, resource, access_token_str, access_token.get_lifetime());
 		result = strdup(ResponseCodes::getString(ResponseCodes::OPERATION_NOT_PERMITTED).c_str());
@@ -349,6 +394,7 @@ char **validate_delegated_action_1_svc(delegated_action_request_t *argp, struct 
 // Find the token in the auth_token_list
 Token *find_token(const std::string &token_received)
 {
+	// Find the token in the list
 	for (Token &token : auth_token_list)
 	{
 		if (token.get_token() == token_received)
@@ -371,7 +417,7 @@ void add_approvals_and_sign(Token &token, const std::unordered_map<std::string, 
 	log("Adding approvals to token for user " + user_id_str, 2);
 	token.add_approvals(approvals);
 
-	// Sign the token if it's not already signed
+	// Sign the token if it is not already signed
 	if (token.get_status() != Token::AUTH_SIGNED)
 	{
 		log("Signing the token and returning it", 2);
@@ -383,19 +429,24 @@ void add_approvals_and_sign(Token &token, const std::unordered_map<std::string, 
 char **return_token_result(const Token &token)
 {
 	static char *result;
+
+	// Use strdup to avoid memory problems
 	result = strdup(token.get_token().c_str());
 	return &result;
 }
 
+// Endpoint to approve a request token
 char **approve_request_token_1_svc(request_authorization_t *argp, struct svc_req *rqstp)
 {
+	// Log header at low severity server logs
+	log("========= APPROVE REQUEST TOKEN =========", 2);
+
 	static char *result;
 
 	std::string token_received = argp->authentification_token;
 	std::string user_id_str = argp->user_id;
 	int refresh_token = argp->refresh_token;
 
-	log("========= APPROVE REQUEST TOKEN =========", 2);
 	log("Request signature for token: " + token_received + " for user " + user_id_str +
 			" with refresh token " + std::to_string(refresh_token),
 		2);
@@ -404,17 +455,21 @@ char **approve_request_token_1_svc(request_authorization_t *argp, struct svc_req
 	Token *token = find_token(token_received);
 	if (token != nullptr)
 	{
+		// Token found, check if it is already signed
 		if (token->get_status() == Token::AUTH_SIGNED)
 		{
 			log("Token already signed. Returning the token", 2);
-			return return_token_result(*token); // Removed '&'
+			return return_token_result(*token);
 		}
 		else
 		{
 			log("Found token as not signed. Signing the token", 2);
+
+			// Get the approvals in FIFO order
 			std::unordered_map<std::string, std::string> approvals = user_to_approvals_list.back();
 			user_to_approvals_list.pop_back();
 
+			// Check if approvals are valid
 			if (!has_valid_approvals(approvals))
 			{
 				log("No approvals found for user " + user_id_str, 2);
@@ -422,17 +477,23 @@ char **approve_request_token_1_svc(request_authorization_t *argp, struct svc_req
 				return &result;
 			}
 
+			// Add approvals and sign the access token
 			add_approvals_and_sign(*token, approvals, user_id_str);
-			return return_token_result(*token); // Removed '&'
+			return return_token_result(*token);
 		}
 	}
 
 	// Token not found, create a new one
 	log("Token not found. Adding it to the list", 2);
 	Token new_token(token_received, user_id_str, global_token_lifetime, Token::AUTH_UNSIGNED);
+
+	// Get the approvals in FIFO order
 	std::unordered_map<std::string, std::string> approvals = user_to_approvals_list[0];
+
+	// Remove the first approval from the list
 	user_to_approvals_list.erase(user_to_approvals_list.begin());
 
+	// Check if approvals are valid
 	if (!has_valid_approvals(approvals))
 	{
 		log("No approvals found for user " + user_id_str, 2);
@@ -440,16 +501,18 @@ char **approve_request_token_1_svc(request_authorization_t *argp, struct svc_req
 		return &result;
 	}
 
+	// Add approvals and sign the access token
 	add_approvals_and_sign(new_token, approvals, user_id_str);
 
 	// Add the new token to the list and return it
 	auth_token_list.push_back(new_token);
-	return return_token_result(new_token); // Removed '&'
+	return return_token_result(new_token);
 }
 
 // Find the user ID based on the access token
 std::string find_user_id_by_token(const std::string &access_token_str)
 {
+	// Search for the access token in the user_to_access_token map
 	for (const auto &user_access_token : user_to_access_token)
 	{
 		if (user_access_token.second.get_token() == access_token_str)
@@ -463,18 +526,22 @@ std::string find_user_id_by_token(const std::string &access_token_str)
 // Generate a new access and refresh token
 std::pair<std::string, std::string> generate_new_tokens(const std::string &refresh_token_str)
 {
+	// Use the refresh token to generate new access and refresh tokens
 	std::string new_access_token = generate_access_token(strdup(refresh_token_str.c_str()));
 	std::string new_refresh_token = generate_access_token(strdup(new_access_token.c_str()));
 	return {new_access_token, new_refresh_token};
 }
 
-// Update the user’s access token in the map
+// Update the user access token in the map
 void update_user_access_token(const std::string &user_id, const Token &current_token,
 							  const std::string &new_access_token, const std::string &new_refresh_token)
 {
+	// Create a new access token and copy all the approvals
 	Token new_access_token_i(new_access_token, new_refresh_token, current_token.get_user_id(),
 							 global_token_lifetime, Token::ACCESS);
 	new_access_token_i.copy_all_approvals(current_token);
+
+	// Add the new access token to the user
 	user_to_access_token[user_id] = new_access_token_i;
 }
 
@@ -483,8 +550,11 @@ access_token_t *prepare_access_token_result(access_token_t &result,
 											const std::string &new_access_token,
 											const std::string &new_refresh_token)
 {
+	// Use strdup to avoid memory problems
 	result.access_token = strdup(new_access_token.c_str());
 	result.refresh_token = strdup(new_refresh_token.c_str());
+
+	// Set the expiration time as default for server
 	result.expiration = global_token_lifetime;
 	return &result;
 }
@@ -493,14 +563,20 @@ access_token_t *prepare_access_token_result(access_token_t &result,
 access_token_t *handle_token_not_found(access_token_t &result)
 {
 	log("Access token not found. Could not refresh it", 2);
+
+	// Fill with TOKEN_EXPIRED response
 	result.access_token = strdup(ResponseCodes::getString(ResponseCodes::TOKEN_EXPIRED).c_str());
 	result.refresh_token = strdup(ResponseCodes::getString(ResponseCodes::TOKEN_EXPIRED).c_str());
 	result.expiration = -1;
 	return &result;
 }
 
+// Endpoint to refresh the access token
 access_token_t *refresh_access_1_svc(access_token_t *argp, struct svc_req *rqstp)
 {
+	// Log header at low severity server logs
+	log("========= REFRESH ACCESS TOKEN =========", 2);
+
 	static access_token_t result;
 
 	// Parse the arguments
@@ -512,7 +588,6 @@ access_token_t *refresh_access_1_svc(access_token_t *argp, struct svc_req *rqstp
 
 	// Log the user authorization refresh attempt
 	log("BEGIN " + user_id + " AUTHZ REFRESH", 0);
-	log("========= REFRESH ACCESS TOKEN =========", 2);
 	log("Refresh access token with access token " + access_token_str +
 			" and refresh token " + refresh_token_str,
 		2);
@@ -520,6 +595,7 @@ access_token_t *refresh_access_1_svc(access_token_t *argp, struct svc_req *rqstp
 	// If user ID is found, proceed to refresh the token
 	if (!user_id.empty())
 	{
+		// Get the current access token
 		Token &current_token = user_to_access_token[user_id];
 		log("Access token found. Refreshing it", 2);
 

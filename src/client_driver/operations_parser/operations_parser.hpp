@@ -2,6 +2,7 @@
 #include <vector>
 #include "../operations/operation.hpp"
 
+// OperationsParser class which is responsible for parsing the operations from the input file
 class OperationsParser
 {
 public:

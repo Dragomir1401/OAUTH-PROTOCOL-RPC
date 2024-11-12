@@ -94,7 +94,7 @@ oauth_protocol_1(struct svc_req *rqstp, register SVCXPRT *transp)
 
 void readUsersFile(char *file)
 {
-	// open file with fopen
+	// Open file with fopen
 	FILE *fp = fopen(file, "r");
 	if (fp == NULL)
 	{
@@ -102,11 +102,11 @@ void readUsersFile(char *file)
 		exit(1);
 	}
 
-	// read first line as number of users
+	// Read first line as number of users
 	int num_users;
 	fscanf(fp, "%d\n", &num_users);
 
-	// read each user and add to user_list
+	// Read each user and add to user_list
 	for (int i = 0; i < num_users; i++)
 	{
 		char user[100];
@@ -117,7 +117,7 @@ void readUsersFile(char *file)
 
 void readResourcesFile(char *file)
 {
-	// open file with fopen
+	// Open file with fopen
 	FILE *fp = fopen(file, "r");
 	if (fp == NULL)
 	{
@@ -125,11 +125,11 @@ void readResourcesFile(char *file)
 		exit(1);
 	}
 
-	// read first line as number of resources
+	// Read first line as number of resources
 	int num_resources;
 	fscanf(fp, "%d\n", &num_resources);
 
-	// read each resource and add to resource_list
+	// Read each resource and add to resource_list
 	for (int i = 0; i < num_resources; i++)
 	{
 		char resource[100];
@@ -140,7 +140,7 @@ void readResourcesFile(char *file)
 
 void readApprovalsFile(char *file, std::vector<std::string> user_list)
 {
-	// open file with fopen
+	// Open file with fopen
 	FILE *fp = fopen(file, "r");
 	if (fp == NULL)
 	{
@@ -150,35 +150,35 @@ void readApprovalsFile(char *file, std::vector<std::string> user_list)
 
 	int user_counter = 0;
 
-	// read each line and add to approvals_list
+	// Read each line and add to approvals_list
 	while (!feof(fp))
 	{
-		// approvals come as format <resource>, <permission>, <resource>, <permission>, ...
+		// Approvals come as format <resource>, <permission>, <resource>, <permission>, ...
 		char line[1000];
 		fscanf(fp, "%s\n", line);
 
-		// map for approvals of a user
+		// Map for approvals of a user
 		std::unordered_map<std::string, std::string> user_approvals;
 
-		// split line by comma
+		// Split line by comma
 		int word_counter = 0;
 		char *token = strtok(line, ",");
 		char *resource = NULL;
 		while (token != NULL)
 		{
-			// if counter is even, it is a resource
+			// If counter is even, it is a resource
 			if (word_counter % 2 == 0)
 			{
 				resource = token;
 			}
-			// if counter is odd, it is a permission
+			// If counter is odd, it is a permission
 			else
 			{
-				// transform resource and permission to string
+				// Transform resource and permission to string
 				std::string resource_str(resource);
 				std::string permission_str(token);
 
-				// add to user_approvals
+				// Add to user_approvals
 				user_approvals[resource_str] = permission_str;
 			}
 			word_counter++;

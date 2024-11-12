@@ -1,5 +1,6 @@
 #include "operation.hpp"
 
+// Operation class which hold the information any type of operation
 Operation::Operation(std::string user_id, std::string action, std::string resource, int auto_refresh)
 {
     this->user_id = user_id;
@@ -32,34 +33,16 @@ int Operation::is_auto_refresh()
     return auto_refresh;
 }
 
-bool Operation::is_request()
+int Operation::get_type()
 {
-    return action == REQUEST;
-}
-
-bool Operation::is_modify()
-{
-    return action == MODIFY;
-}
-
-bool Operation::is_insert()
-{
-    return action == INSERT;
-}
-
-bool Operation::is_delete()
-{
-    return action == DELETE;
-}
-
-bool Operation::is_read()
-{
-    return action == READ;
-}
-
-bool Operation::is_execute()
-{
-    return action == EXECUTE;
+    if (action == REQUEST)
+    {
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
 }
 
 std::string Operation::to_string()

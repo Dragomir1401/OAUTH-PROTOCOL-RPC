@@ -17,7 +17,7 @@ ClientModel::~ClientModel()
 
 void ClientModel::add_access_token(std::string user_id, access_token_t access_token)
 {
-    // check if the user already has an access token, then update it and log
+    // Check if the user already has an access token, then update it and log
     if (this->user_to_access_token.find(user_id) != this->user_to_access_token.end())
     {
         log("Updating access token for user: " + user_id, 1);
@@ -43,6 +43,11 @@ std::unordered_map<std::string, access_token_t> ClientModel::get_user_to_access_
 
 void ClientModel::log(std::string message, int level)
 {
+    // logging to the global logging file
+    // Level logger
+    // 1 - low severity client logs
+    // 2 - low severity server logs
+    // 0 - high severity logs
     if (level == 1)
     {
         std::ofstream log_file("client_global_logging_file.txt", std::ios_base::app);
@@ -61,6 +66,7 @@ void ClientModel::log(std::string message, int level)
 
 void ClientModel::decrease_lifetime(std::string user_id)
 {
+    // Decrease the lifetime of the token
     if (this->user_to_access_token.find(user_id) != this->user_to_access_token.end())
     {
         this->user_to_access_token[user_id].expiration--;

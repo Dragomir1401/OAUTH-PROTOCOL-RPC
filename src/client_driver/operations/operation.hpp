@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 
+// Type of operations
 #define REQUEST "REQUEST"
 #define MODIFY "MODIFY"
 #define INSERT "INSERT"
@@ -11,6 +12,8 @@
 #define ON 1
 #define OFF 0
 #define NOT_APPLICABLE -1
+
+// Operation class which hold the information any type of operation
 class Operation
 {
 public:
@@ -20,12 +23,7 @@ public:
     std::string get_action();
     std::string get_resource();
     int is_auto_refresh();
-    bool is_request();
-    bool is_modify();
-    bool is_insert();
-    bool is_delete();
-    bool is_read();
-    bool is_execute();
+    int get_type();
     std::string to_string();
 
 private:

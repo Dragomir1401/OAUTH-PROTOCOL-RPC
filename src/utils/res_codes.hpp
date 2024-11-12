@@ -1,6 +1,7 @@
 #include <string>
 #include <unordered_map>
 
+// Static class to hold the response codes
 class ResponseCodes
 {
 public:
