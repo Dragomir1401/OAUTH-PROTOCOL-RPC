@@ -11,7 +11,7 @@
 #include <memory.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include "../../data/server_model/server_model.h"
+#include "../data/server_model/server_model.h"
 #include <iostream>
 
 #ifndef SIG_PF

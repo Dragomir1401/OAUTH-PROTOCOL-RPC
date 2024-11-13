@@ -4,7 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "oauth.h"
+#include "../rpc/oauth.h"
 #include <iostream>
 #include <fstream>
 

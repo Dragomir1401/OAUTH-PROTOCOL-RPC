@@ -5,7 +5,7 @@
  */
 
 #include "oauth.h"
-#include "../../data/server_model/server_model.h"
+#include "../data/server_model/server_model.h"
 #include "../client_driver/operations/operation.hpp"
 #include "../utils/token.h"
 #include "../utils/res_codes.hpp"

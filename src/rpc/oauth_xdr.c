@@ -9,6 +9,7 @@ bool_t
 xdr_access_token_t(XDR *xdrs, access_token_t *objp)
 {
 	register int32_t *buf;
+	(void)buf;
 
 	if (!xdr_string(xdrs, &objp->access_token, ~0))
 		return FALSE;
@@ -23,6 +24,7 @@ bool_t
 xdr_request_authorization_t(XDR *xdrs, request_authorization_t *objp)
 {
 	register int32_t *buf;
+	(void)buf;
 
 	if (!xdr_string(xdrs, &objp->user_id, ~0))
 		return FALSE;
@@ -37,6 +39,7 @@ bool_t
 xdr_access_token_request_t(XDR *xdrs, access_token_request_t *objp)
 {
 	register int32_t *buf;
+	(void)buf;
 
 	if (!xdr_string(xdrs, &objp->user_id, ~0))
 		return FALSE;
@@ -51,6 +54,7 @@ bool_t
 xdr_delegated_action_request_t(XDR *xdrs, delegated_action_request_t *objp)
 {
 	register int32_t *buf;
+	(void)buf;
 
 	if (!xdr_string(xdrs, &objp->operation_type, ~0))
 		return FALSE;
