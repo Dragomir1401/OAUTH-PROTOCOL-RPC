@@ -14,6 +14,9 @@ This project implements a client-server system that simulates an OAuth-based aut
 
 **DO NOT** regenerate the RPC files using `rpcgen`. These files were **manually modified** to fit the specific requirements of this project, and regenerating them will override these custom changes.
 
+**MAKE SURE** you have RPC running on your machine.
+Run `sudo systemctl status rpcbind` - make sure it is active (running)
+
 ---
 
 ## Objectives
